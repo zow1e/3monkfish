@@ -16,13 +16,15 @@ export interface Pet {
   id: string;
   ownerId: string;
   name: string;
-  species: 'dog' | 'cat' | 'rabbit' | 'other';
+  species: 'dog' | 'cat' | 'rabbit' | 'bird' | 'other';
   breed?: string;
   /** Human-readable age, e.g. "4 years", "6 months". */
   age?: string;
   birthday?: string;
   sex?: string;
   weight?: string;
+  /** Optional display height, e.g. "56cm". */
+  height?: string;
   /** Region or country; MVP default Singapore. */
   location?: string;
   /** Short description of temperament and behavior. */

@@ -3,9 +3,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import OpenAI from "openai";
 import { chunkMarkdownByH2 } from "./chunkMarkdown.js";
-import { loadRagEnv } from "./config.js";
-import { embedTexts } from "./embed.js";
-import { createPgClient } from "./pgClient.js";
+import { createPgClient, embedTexts, loadRagEnv } from "@petcare/rag-answer";
 
 /** Run via `pnpm rag:*` from the monorepo root so cwd is the repo root. */
 const REPO_ROOT = process.cwd();

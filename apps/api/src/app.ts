@@ -11,12 +11,24 @@ import { ingestionRouter } from './routes/ingestion';
 
 export const createApp = () => {
   const app = express();
+  app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') {
+      res.sendStatus(204);
+      return;
+    }
+    next();
+  });
   app.use(express.json());
   app.use('/health', healthRouter);
   app.use('/owners', ownersRouter);
   app.use('/pets', petsRouter);
   app.use('/appointments', appointmentsRouter);
   app.use('/reminders', remindersRouter);
+  /** RAG chat — also under `/api/chat` so Vite can proxy `/api/*` without path rewriting. */
+  app.use('/api/chat', chatRouter);
   app.use('/chat', chatRouter);
   app.use('/knowledge-base', knowledgeBaseRouter);
   app.use('/listings', listingsRouter);

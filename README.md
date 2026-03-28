@@ -110,6 +110,47 @@ The current backend MVP supports:
 ## Environment Variables
 
 See `.env.example` for the full list.
+   ```bash
+   export PET_ID="<uuid-from-public.pets>"
+   pnpm rag:search -- "Should I worry about less hay?"
+   # or
+   pnpm rag:search -- --pet-id="<uuid>" "Should I worry about less hay?"
+   pnpm rag:ask -- --pet-id="<uuid>" "Any enrichment ideas?"
+   ```
+
+   Embedding uses **pet context + question**; `rag_chunks` are filtered by that pet’s species/breed (with fallbacks if the corpus has no exact match).
+
+| Path | Purpose |
+|------|--------|
+| `data/knowledge/holland-lop.md` | MVP corpus (education only; not veterinary advice) |
+| `scripts/rag/ingest.ts` | Chunk → embed → upsert `rag_chunks` |
+| `scripts/rag/search.ts` | Query embedding → cosine nearest neighbors |
+| `scripts/rag/answer.ts` | Retrieve + `OPENAI_CHAT_MODEL` answer |
+| `db/migrations/001_rag_chunks.sql` | `rag_chunks` table + vector column |
+| `db/migrations/002_faq_articles.sql` | `faq_articles` + 3 seeded Holland Lop questions |
+| `db/migrations/003_rag_faq_chunks.sql` | FAQ rows mirrored into `rag_chunks`; run `pnpm rag:ingest` to embed |
+| `db/migrations/004_owners_and_pets.sql` | `owners` (user profiles) + `pets`; optional `auth_user_id` → Supabase Auth |
+| `db/migrations/005_pets_location_personality_age.sql` | Upgrade: `location` / `personality` / rename `age_text` → `age` if you ran an older 004 |
+| `db/migrations/006_pets_photo_url.sql` | `pets.photo_url` optional cached URL |
+| `db/migrations/007_pets_photo_storage.sql` | `pets.photo_bucket` + `pets.photo_storage_path` for Supabase Storage keys |
+| `db/migrations/008_appointments.sql` | `appointments` — scheduled visits with user-entered provider, reason, notes, `details_json` |
+| `db/migrations/009_pets_bird_height_rls.sql` | `pets`: species `bird`, `height`; RLS on `owners`/`pets`; Storage bucket `pet-photos` + policies |
+
+## App database (owners & pets)
+
+Run `db/migrations/004_owners_and_pets.sql` in Supabase after prior migrations. If you previously created `pets` with `age_text` and without `location` / `personality`, also run **`005_pets_location_personality_age.sql`**.
+
+- **`owners`** — name, email (case-insensitive unique), preferences JSON, optional **`auth_user_id`** (FK to `auth.users` on Supabase when the block runs).
+- **`pets`** — many rows can share the same **`owner_id`** (one user, multiple pets). Photo fields: **`photo_url`** (optional cached URL), **`photo_bucket`** (default `pet-photos`), **`photo_storage_path`** (object key in that bucket, e.g. `{owner_id}/{pet_id}.webp`). Query pets from PostgREST/API as usual; on the frontend use **`@petcare/pet-photo`** `resolvePetPhotoPublicUrl({ supabaseProjectUrl, photoUrl, photoBucket, photoStoragePath })` for **public** buckets, or the Supabase client’s **`createSignedUrl`** for private buckets. Run **`007_pets_photo_storage.sql`** if you already applied `006` without bucket/path columns.
+- **`appointments`** — after **`008_appointments.sql`**: links **`owner_id`** + **`pet_id`** (trigger enforces the pet belongs to that owner), **`scheduled_at`**, optional **`end_at`**, **`appointment_type`**, **`reason_for_visit`**, **`notes`**, optional **`provider_name`** / **`provider_address`**, flexible **`details_json`**, **`status`** (`scheduled` \| `completed` \| `cancelled` \| `no_show`).
+- **`009_pets_bird_height_rls.sql`** — adds species **`bird`**, optional **`pets.height`**, **RLS** on **`owners`** / **`pets`** for the Supabase **`authenticated`** role, **`pet-photos`** storage bucket + policies (upload path `{owner_id}/{pet_id}.ext`). Use when wiring the API or a Supabase-backed client; the bundled Vite UI does not require it.
+
+### Web app (`apps/web/app`)
+
+Pets are stored in the **browser** (`localStorage`) — no login or Supabase env needed for the default flow.
+
+1. From **`apps/web/app`**: `npm install` then `npm run dev`.
+2. Open the URL Vite prints (e.g. **http://localhost:5173/**). **Dashboard** lists pets; use **Add pet** / **`/onboarding`** to add another. **My Pets** opens the first pet or **`/pet-profile?id=<uuid>`** for a specific card.
 
 Core variables include:
 
