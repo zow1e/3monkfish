@@ -27,7 +27,7 @@ PetCare Copilot is a backend-first AI pet-care assistant scaffold. It is designe
 - `packages/*` - reusable domain and platform packages
 - `data/tinyfish/*` - raw and normalized listing artifacts
 - `data/knowledge/*` - curated markdown for the Holland Lop RAG MVP seed
-- `db/migrations/*` - SQL for `rag_chunks` (pgvector)
+- `db/migrations/*` - SQL for `rag_chunks` (pgvector) and `faq_articles` (curated FAQs)
 - `docs/*` - architecture, API, prompts, runbooks, eval docs
 
 ## Quick start
@@ -55,7 +55,9 @@ PetCare Copilot is a backend-first AI pet-care assistant scaffold. It is designe
 Prerequisites: Node 20+, Postgres with **pgvector** (e.g. Supabase), `OPENAI_API_KEY`, and `DATABASE_URL`. For Supabase from a laptop, use **Connect → Transaction pooler** (`:6543`) and user `postgres.<project_ref>`.
 
 1. Run `db/migrations/001_rag_chunks.sql` in the Supabase SQL editor (or `psql`).
-2. Ingest, search, and optionally ask:
+2. Run `db/migrations/002_faq_articles.sql` to create `faq_articles` and insert three Holland Lop FAQs (education only).
+3. Run `db/migrations/003_rag_faq_chunks.sql` to allow nullable embeddings and copy FAQs into `rag_chunks` (`corpus = 'faq'`, embedding pending until ingest).
+4. Ingest, search, and optionally ask:
 
    ```bash
    pnpm rag:ingest
@@ -70,6 +72,8 @@ Prerequisites: Node 20+, Postgres with **pgvector** (e.g. Supabase), `OPENAI_API
 | `scripts/rag/search.ts` | Query embedding → cosine nearest neighbors |
 | `scripts/rag/answer.ts` | Retrieve + `OPENAI_CHAT_MODEL` answer |
 | `db/migrations/001_rag_chunks.sql` | `rag_chunks` table + vector column |
+| `db/migrations/002_faq_articles.sql` | `faq_articles` + 3 seeded Holland Lop questions |
+| `db/migrations/003_rag_faq_chunks.sql` | FAQ rows mirrored into `rag_chunks`; run `pnpm rag:ingest` to embed |
 
 ## Environment variables
 
