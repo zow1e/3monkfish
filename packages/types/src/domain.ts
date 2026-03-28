@@ -189,12 +189,17 @@ export interface TinyfishRawListing {
 }
 
 export type SupportedSite = 'amazon' | 'petmall' | 'petlovers';
+export type TinyFishSearchType = 'product' | 'service';
+export type TinyFishRequestSource = 'direct' | 'chatbot' | 'search-page';
 
 export interface TinyFishScrapeRequest {
   keywords: string;
   sites: SupportedSite[];
   maxProductsPerSite?: number;
   countryCode?: string;
+  searchType?: TinyFishSearchType;
+  requestSource?: TinyFishRequestSource;
+  filenameTag?: string;
 }
 
 export interface RawTinyFishProduct {
@@ -259,6 +264,8 @@ export interface TinyFishScrapeJobResult {
   keywords: string;
   requestedSites: SupportedSite[];
   status: 'completed' | 'failed' | 'blocked' | 'partial';
+  searchType?: TinyFishSearchType;
+  requestSource?: TinyFishRequestSource;
   site_outcomes: TinyFishRunOutcome[];
   normalized_results: NormalizedProductListing[];
   files: {
@@ -267,4 +274,51 @@ export interface TinyFishScrapeJobResult {
   };
   started_at: string;
   completed_at: string;
+}
+
+export interface ChatbotKeywordScrapeRequest {
+  sites: SupportedSite[];
+  maxProductsPerSite?: number;
+  countryCode?: string;
+  placeholderKeywords?: string[];
+  searchType?: TinyFishSearchType;
+}
+
+export interface ChatbotKeywordScrapeResult {
+  requestSource: 'chatbot';
+  keywordSets: string[];
+  runs: TinyFishScrapeJobResult[];
+}
+
+export interface PetProfileKeywordPreset {
+  petId: string;
+  petName: string;
+  species: string;
+  breed?: string;
+  allergies?: string[];
+  sensitivities?: string[];
+  productKeywords: string[];
+  serviceKeywords: string[];
+}
+
+export interface SearchPageScrapeRequest {
+  petProfile: PetProfileKeywordPreset;
+  searchType: TinyFishSearchType;
+  searchInput: string;
+  sites: SupportedSite[];
+  maxProductsPerSite?: number;
+  countryCode?: string;
+}
+
+export interface SearchPageScrapeResult extends TinyFishScrapeJobResult {
+  requestSource: 'search-page';
+  searchType: TinyFishSearchType;
+  petProfile: {
+    petId: string;
+    petName: string;
+    species: string;
+    breed?: string;
+  };
+  presetKeywords: string[];
+  combinedKeywords: string;
 }

@@ -119,14 +119,27 @@ export const runSiteScrape = async (
   const normalizedResults = parsedSiteResult.products.map((product) =>
     normalizeProductListing(product, input.keywords),
   );
+  const filenameVariant = [input.requestSource, input.searchType, input.filenameTag].filter(Boolean).join('__');
 
   const rawFilePath = await writeJsonFile(
-    buildTinyFishFilePath(env.TINYFISH_RAW_DATA_DIR, timestamp, input.site, input.keywords),
+    buildTinyFishFilePath(
+      env.TINYFISH_RAW_DATA_DIR,
+      timestamp,
+      input.site,
+      input.keywords,
+      filenameVariant || undefined,
+    ),
     payload,
   );
 
   const normalizedFilePath = await writeJsonFile(
-    buildTinyFishFilePath(env.TINYFISH_NORMALIZED_DATA_DIR, timestamp, input.site, input.keywords),
+    buildTinyFishFilePath(
+      env.TINYFISH_NORMALIZED_DATA_DIR,
+      timestamp,
+      input.site,
+      input.keywords,
+      filenameVariant || undefined,
+    ),
     { products: normalizedResults },
   );
 
