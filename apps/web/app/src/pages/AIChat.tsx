@@ -3,7 +3,7 @@ import { Send, Sparkles, Stethoscope, Utensils, BarChart2, ListChecks, Phone } f
 import Header from '../components/Header';
 
 const patients = [
-  { name: 'Luna', breed: 'Golden Retriever · 3y', online: true },
+  { name: 'Leo', breed: 'Golden Retriever · 3y', online: true },
   { name: 'Milo', breed: 'British Shorthair · 2y', online: false },
 ];
 
@@ -14,19 +14,19 @@ type Message =
 const initialMsgs: Message[] = [
   {
     role: 'ai',
-    text: "Hello! I'm your PetCare Copilot. I have access to Luna's medical history and recent activity logs. How can I help you today?",
+    text: "Hello! I'm your PetCare Copilot. I have access to Leo's medical history and recent activity logs. How can I help you today?",
     cards: [
-      { icon: 'checkup', label: 'Recent Checkup', sub: "Summarize Luna's last visit from Jun 13th" },
-      { icon: 'diet', label: 'Dietary Advice', sub: 'Is it safe for Luna to eat pumpkin seeds?' },
+      { icon: 'checkup', label: 'Recent Checkup', sub: "Summarize Leo's last visit from Jun 13th" },
+      { icon: 'diet', label: 'Dietary Advice', sub: 'Is it safe for Leo to eat pumpkin seeds?' },
     ],
   },
   {
     role: 'user',
-    text: "Luna seems a bit lethargic today and didn't finish her breakfast. Is this normal?",
+    text: "Leo seems a bit lethargic today and didn't finish her breakfast. Is this normal?",
   },
   {
     role: 'ai',
-    text: "I've checked Luna's recent data. Her activity levels were 30% lower than her usual morning average. Lethargy combined with loss of appetite can be a sign of many things.\n\nHas she vomited or shown any signs of discomfort when you touch her abdomen?",
+    text: "I've checked Leo's recent data. Her activity levels were 30% lower than her usual morning average. Lethargy combined with loss of appetite can be a sign of many things.\n\nHas she vomited or shown any signs of discomfort when you touch her abdomen?",
   },
 ];
 
@@ -94,7 +94,7 @@ export default function AIChat() {
               <span className="text-xs font-semibold text-on-secondary-fixed">Health Insights</span>
             </div>
             <p className="text-xs text-secondary leading-relaxed mb-3">
-              Luna has logged 67% of weekly activity. Would you like to review her trends?
+              Leo has logged 67% of weekly activity. Would you like to review her trends?
             </p>
             <button className="text-xs font-semibold text-primary hover:opacity-70 transition-opacity focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2">
               View Analytics →

@@ -38,7 +38,7 @@ export default function SearchResults() {
         {/* Page title */}
         <div className="mb-6">
           <h1 className="font-display text-3xl font-semibold text-on-secondary-fixed tracking-tight">
-            Search for Luna
+            Search for Leo
           </h1>
           <p className="text-secondary text-sm mt-1">Personalized results based on your pet profile</p>
         </div>
@@ -82,7 +82,7 @@ export default function SearchResults() {
             L
           </div>
           <div>
-            <p className="font-semibold text-on-secondary-fixed text-sm">Luna</p>
+            <p className="font-semibold text-on-secondary-fixed text-sm">Leo</p>
             <p className="text-secondary text-xs">Golden Retriever · 3 years</p>
           </div>
           <span className="bg-secondary-container text-secondary text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">

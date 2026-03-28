@@ -1,34 +1,36 @@
 import { Plus, Calendar, Utensils, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import latteImg from '../assets/latte.png';
+import leoImg from '../assets/leo.png';
 
 const pets = [
   {
-    name: 'Cooper',
+    name: 'Latte',
     breed: 'Golden Retriever',
     age: '3 years',
     status: 'ACTIVE',
     statusColor: 'bg-tertiary-container text-tertiary',
     activity: 'Ready for a stroll',
     activityIcon: '🐾',
-    img: 'https://placehold.co/280x200/e8e8e8/5b5d70?text=Cooper',
+    img: latteImg,
   },
   {
-    name: 'Luna',
+    name: 'Leo',
     breed: 'Tabby Cat',
     age: '5 years',
     status: 'NAPPING',
     statusColor: 'bg-secondary-container text-secondary',
     activity: 'Dreaming softly',
     activityIcon: '🌙',
-    img: 'https://placehold.co/280x200/e8e8e8/5b5d70?text=Luna',
+    img: leoImg,
   },
 ];
 
 const reminders = [
   {
     icon: Calendar,
-    title: "Cooper's Vitamins",
+    title: "Latte's Vitamins",
     subtitle: 'Scheduled for 6:00 PM',
   },
   {
@@ -39,7 +41,7 @@ const reminders = [
 ];
 
 const activities = [
-  { dot: 'bg-primary', label: 'Morning Walk Finished', sub: 'Cooper · 32 mins ago' },
+  { dot: 'bg-primary', label: 'Morning Walk Finished', sub: 'Latte · 32 mins ago' },
   { dot: 'bg-secondary', label: 'Water Refilled', sub: 'Kitchen Fountain · 1h ago' },
   { dot: 'bg-surface-container-highest', label: 'Play Session Ended', sub: 'Backyard · 4h ago' },
 ];

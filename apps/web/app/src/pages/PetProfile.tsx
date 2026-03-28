@@ -1,6 +1,7 @@
 import { ArrowLeft, Bell, ChevronDown, Syringe, Stethoscope, Scissors } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import leoImg from '../assets/leo.png';
 
 const stats = [
   { label: 'Weight', value: '21kg' },
@@ -58,8 +59,8 @@ export default function PetProfile() {
               {/* Pet image */}
               <div className="relative h-56">
                 <img
-                  src="https://placehold.co/800x224/e8e8e8/5b5d70?text=Luna"
-                  alt="Luna"
+                  src={leoImg}
+                  alt="Leo"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
@@ -69,7 +70,7 @@ export default function PetProfile() {
               <div className="px-6 py-5">
                 <div className="flex items-start justify-between mb-4">
                   <div>
-                    <h1 className="font-display text-3xl font-semibold text-on-secondary-fixed tracking-tight">Luna</h1>
+                    <h1 className="font-display text-3xl font-semibold text-on-secondary-fixed tracking-tight">Leo</h1>
                     <p className="text-secondary text-sm mt-1">Golden Retriever · Female · 3 years old</p>
                   </div>
                   <span className="bg-primary-fixed text-primary text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
@@ -116,7 +117,7 @@ export default function PetProfile() {
               </button>
               <div className="mt-4 text-secondary text-sm leading-relaxed">
                 <p>
-                  Luna is a gentle, energetic Golden Retriever who loves morning walks in the park and greeting all her buddies.
+                  Leo is a gentle, energetic Golden Retriever who loves morning walks in the park and greeting all their buddies.
                   She's highly vocal with lots of appetite and has a known food allergy to tree nuts.
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-4">

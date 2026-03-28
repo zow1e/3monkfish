@@ -77,7 +77,7 @@ export default function Onboarding() {
                 type="text"
                 value={petName}
                 onChange={e => setPetName(e.target.value)}
-                placeholder="e.g. Luna"
+                placeholder="e.g. Leo"
                 className="w-full bg-surface-container-highest rounded-[1.5rem] px-5 py-3.5 text-on-secondary-fixed text-sm outline-none placeholder:text-secondary/50 focus:bg-primary-fixed transition-colors"
               />
             </div>
