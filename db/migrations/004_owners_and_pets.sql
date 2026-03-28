@@ -31,6 +31,7 @@ create unique index if not exists owners_email_lower_unique on public.owners (lo
 create index if not exists owners_auth_user_id_idx on public.owners (auth_user_id)
   where auth_user_id is not null;
 
+-- Many pets per owner: repeat rows with the same owner_id as needed.
 create table if not exists public.pets (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid not null references public.owners (id) on delete cascade,

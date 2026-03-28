@@ -65,6 +65,18 @@ Prerequisites: Node 20+, Postgres with **pgvector** (e.g. Supabase), `OPENAI_API
    pnpm rag:ask -- "My Holland Lop is molting — any grooming tips?"
    ```
 
+   **With a pet profile (recommended):** each owner can have **many pets** (`pets.owner_id` → `owners.id`). Pick one pet for a query via env or CLI so retrieval and answers use its **species, breed, age, weight, location, personality**:
+
+   ```bash
+   export PET_ID="<uuid-from-public.pets>"
+   pnpm rag:search -- "Should I worry about less hay?"
+   # or
+   pnpm rag:search -- --pet-id="<uuid>" "Should I worry about less hay?"
+   pnpm rag:ask -- --pet-id="<uuid>" "Any enrichment ideas?"
+   ```
+
+   Embedding uses **pet context + question**; `rag_chunks` are filtered by that pet’s species/breed (with fallbacks if the corpus has no exact match).
+
 | Path | Purpose |
 |------|--------|
 | `data/knowledge/holland-lop.md` | MVP corpus (education only; not veterinary advice) |
@@ -82,7 +94,7 @@ Prerequisites: Node 20+, Postgres with **pgvector** (e.g. Supabase), `OPENAI_API
 Run `db/migrations/004_owners_and_pets.sql` in Supabase after prior migrations. If you previously created `pets` with `age_text` and without `location` / `personality`, also run **`005_pets_location_personality_age.sql`**.
 
 - **`owners`** — name, email (case-insensitive unique), preferences JSON, optional **`auth_user_id`** (FK to `auth.users` on Supabase when the block runs).
-- **`pets`** — `breed`, **`age`** (free text), **`weight`**, **`location`** (default **`Singapore`**), **`personality`** (short temperament/behavior blurb), plus species (`dog` / `cat` / `rabbit` / `other`), birthday, notes, etc. Aligned with `packages/types` `Pet`.
+- **`pets`** — many rows can share the same **`owner_id`** (one user, multiple pets). Columns include `breed`, **`age`**, **`weight`**, **`location`** (default **`Singapore`**), **`personality`**, species (`dog` / `cat` / `rabbit` / `other`), birthday, notes, etc. Aligned with `packages/types` `Pet`. The RAG CLI uses **`PET_ID` / `--pet-id`** to load the active pet for search and answers.
 
 ## Environment variables
 
@@ -94,6 +106,7 @@ Core variables:
 - `OPENAI_MODEL`
 - `OPENAI_EMBEDDING_MODEL`
 - `OPENAI_CHAT_MODEL` (optional; used by `pnpm rag:ask`)
+- `PET_ID` (optional; UUID of `public.pets` for `rag:search` / `rag:ask`)
 - `DATABASE_URL`
 - `PGVECTOR_ENABLED`
 - `TINYFISH_RAW_DATA_DIR`
