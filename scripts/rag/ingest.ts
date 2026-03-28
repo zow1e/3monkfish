@@ -70,11 +70,35 @@ async function main() {
     );
   }
 
-  await client.end();
-
   console.log(
-    `Upserted ${chunks.length} chunks from ${relativeSource} using OpenAI model "${env.OPENAI_EMBEDDING_MODEL}".`,
+    `Upserted ${chunks.length} markdown chunk(s) from ${relativeSource} using "${env.OPENAI_EMBEDDING_MODEL}".`,
   );
+
+  const pendingFaqs = await client.query<{ id: string; content: string }>(
+    `select id, content from public.rag_chunks
+     where corpus = 'faq' and embedding is null`,
+  );
+
+  if (pendingFaqs.rows.length > 0) {
+    const faqEmb = await embedTexts(
+      env,
+      openai,
+      pendingFaqs.rows.map((r) => r.content),
+    );
+    for (let i = 0; i < pendingFaqs.rows.length; i += 1) {
+      await client.query(
+        `update public.rag_chunks
+         set embedding = $1::vector, embedding_model = $2
+         where id = $3`,
+        [toVectorLiteral(faqEmb[i]), env.OPENAI_EMBEDDING_MODEL, pendingFaqs.rows[i].id],
+      );
+    }
+    console.log(
+      `Embedded ${pendingFaqs.rows.length} FAQ rag_chunk(s) with "${env.OPENAI_EMBEDDING_MODEL}".`,
+    );
+  }
+
+  await client.end();
 }
 
 main().catch((e) => {

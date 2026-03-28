@@ -30,6 +30,7 @@ async function main() {
     `select id, section_heading, content, embedding <=> $1::vector as distance
      from public.rag_chunks
      where species = $2 and breed = $3
+       and embedding is not null
      order by embedding <=> $1::vector
      limit 5`,
     [vecLiteral, "rabbit", "holland_lop"],
