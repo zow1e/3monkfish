@@ -8,6 +8,28 @@ const cleanText = (value: string | null | undefined): string | null => {
   return trimmed ? trimmed : null;
 };
 
+const SOURCE_SITE_BASE_URL: Record<RawTinyFishProduct['source_site'], string> = {
+  amazon: 'https://www.amazon.com',
+  petmall: 'https://petmall.sg',
+  petlovers: 'https://www.petloverscentre.com',
+};
+
+const normalizeUrl = (
+  value: string | null | undefined,
+  sourceSite: RawTinyFishProduct['source_site'],
+): string | null => {
+  const trimmed = value?.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  try {
+    return new URL(trimmed, SOURCE_SITE_BASE_URL[sourceSite]).toString();
+  } catch {
+    return null;
+  }
+};
+
 const buildId = (site: string, listingUrl: string | null, productName: string | null): string =>
   createHash('sha1')
     .update([site, listingUrl ?? 'no-url', productName ?? 'no-name'].join('::'))
@@ -19,16 +41,16 @@ export const normalizeProductListing = (
   searchKeywords: string,
 ): NormalizedProductListing =>
   normalizedProductListingSchema.parse({
-    id: buildId(product.source_site, cleanText(product.listing_url), cleanText(product.name)),
+    id: buildId(product.source_site, normalizeUrl(product.listing_url, product.source_site), cleanText(product.name)),
     source_site: product.source_site,
     search_keywords: searchKeywords,
     name: cleanText(product.name),
-    image: cleanText(product.image),
+    image: normalizeUrl(product.image, product.source_site),
     price: product.price ?? null,
     rating: product.rating ?? null,
     reviews: product.reviews ?? null,
     in_stock: product.in_stock ?? null,
-    listing_url: cleanText(product.listing_url),
+    listing_url: normalizeUrl(product.listing_url, product.source_site),
     shipping_fee: product.shipping_fee ?? null,
     delivery_countries: (product.delivery_countries ?? []).map((country) => country.trim()).filter(Boolean),
     product_keywords:

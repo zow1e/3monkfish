@@ -1,5 +1,12 @@
 import { readTinyFishEnv, type TinyFishEnv } from '@petcare/config';
-import type { RawTinyFishProduct, RawTinyFishSiteResult, SupportedSite, TinyFishRunOutcome } from '@petcare/types';
+import type {
+  RawTinyFishProduct,
+  RawTinyFishSiteResult,
+  SupportedSite,
+  TinyFishRequestSource,
+  TinyFishRunOutcome,
+  TinyFishSearchType,
+} from '@petcare/types';
 import { rawTinyFishSiteResultSchema } from '@petcare/validations';
 import { TinyFishClient, type TinyFishAutomationRequest } from '../clients/tinyfishClient';
 import { buildProductSearchGoal } from '../goals/productSearchGoal';
@@ -14,6 +21,9 @@ export interface RunSiteScrapeInput {
   site: SupportedSite;
   maxProductsPerSite?: number;
   countryCode?: string;
+  searchType?: TinyFishSearchType;
+  requestSource?: TinyFishRequestSource;
+  filenameTag?: string;
 }
 
 export interface RunSiteScrapeOptions {

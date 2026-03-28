@@ -33,7 +33,7 @@ export const buildProductSearchGoal = (input: ProductSearchGoalInput): string =>
 Go to the ${strategy.displayName} search or listing page for "${input.keyword}" and extract product details.
 
 Objective:
-Extract product name, product image, current price, star rating, review count, and availability status from the first few relevant visible products on the current page.
+Extract product name, product image, current price, star rating, review count, availability status, and the actual product listing URL from the first few relevant visible products on the current page.
 
 Target:
 - Current page only
@@ -46,6 +46,9 @@ Required actions:
 - Wait for the results page to fully load before extracting.
 - Extract only the first ${input.maxProductCount} relevant visible products on the current page.
 - Extract the product image URL from the visible product card image whenever possible.
+- Extract the actual product listing URL from the product card href, title link, or image link.
+- Do not return the search-results page URL, site homepage URL, or a placeholder URL as listing_url.
+- If the listing URL is relative, convert it to an absolute URL on ${strategy.displayName}.
 - Do not click Add to Cart, Buy Now, checkout, or sign in buttons.
 - Do not paginate.
 - If price shows "See price in cart", set price to null.
@@ -59,7 +62,7 @@ Required fields per product:
 - rating
 - reviews
 - in_stock
-- listing_url
+- listing_url as the real destination product-page URL whenever it is visible on the card
 - shipping_fee
 - delivery_countries
 - description_text

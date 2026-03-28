@@ -1,0 +1,82 @@
+{
+  "run_id": "4cb63df1-5581-48c4-8c97-4617e1abb102",
+  "status": "COMPLETED",
+  "started_at": "2026-03-28T08:49:20.002Z",
+  "finished_at": "2026-03-28T08:50:47.362Z",
+  "num_of_steps": 3,
+  "result": {
+    "products": [
+      {
+        "name": "Small Animal Pet Grooming Kit with Pet Shedding Slicker Brush, Bath Massage Glove, Pet Grooming Comb, Nail Clipper Trimmer for Rabbit, Puppy, Kitten, Guinea Pig, Hamster, Ferret (Pink)",
+        "image": "https://m.media-amazon.com/images/I/71yCxeBIUbL._AC_UL320_.jpg",
+        "price": 8.99,
+        "rating": 4.5,
+        "reviews": 1233,
+        "in_stock": true,
+        "listing_url": "https://www.amazon.com/6-Piece-Grooming-Shedding-Slicker-Massage/dp/B09MCK3JCD/ref=sr_1_1",
+        "shipping_fee": null,
+        "delivery_countries": [],
+        "description_text": "500+ bought in past month",
+        "review_text": null,
+        "source_site": "amazon"
+      },
+      {
+        "name": "Rabbit Grooming Kit, Rabbit Brush for Shedding with Bunny Nail Clipper, Rabbit Nail Trimmers with Pet Combs for Hamster Guinea Pig Ferret by KALAMANDA(6 Pack)",
+        "image": "https://m.media-amazon.com/images/I/71yizBDcDjL._AC_UL320_.jpg",
+        "price": 8.99,
+        "rating": 4.4,
+        "reviews": 1820,
+        "in_stock": true,
+        "listing_url": "https://www.amazon.com/Grooming-Clipper-Trimmer-Remover-KALAMANDA/dp/B09959HMVS/ref=sr_1_2",
+        "shipping_fee": null,
+        "delivery_countries": [],
+        "description_text": "1K+ bought in past month",
+        "review_text": null,
+        "source_site": "amazon"
+      },
+      {
+        "name": "VCZONE Pink Small Animal Grooming Kit with Nail Clipper, Flea Comb, Shampoo Brush, Slicker Brush, Massage Glove for Rabbits",
+        "image": "https://m.media-amazon.com/images/I/81o4IE-6+UL._AC_UL320_.jpg",
+        "price": 11.99,
+        "rating": 4.4,
+        "reviews": 1071,
+        "in_stock": true,
+        "listing_url": "https://www.amazon.com/VCZONE-Grooming-Clipper-Shedding-Cleaning/dp/B0B96V2RHT/ref=sr_1_3",
+        "shipping_fee": null,
+        "delivery_countries": [],
+        "description_text": "100+ bought in past month",
+        "review_text": null,
+        "source_site": "amazon"
+      },
+      {
+        "name": "9PCS Small Animal Grooming Kit, Cleaning Brush Removes Loose Hair, Pet Bath Brush,Shampoo Brush, Nail Clipper, Flea Comb For Rabbit, Puppy, Kitten, Guinea Pig (9PCS-Pink)",
+        "image": "https://m.media-amazon.com/images/I/61nZLmWJZ5L._AC_UL320_.jpg",
+        "price": 8.99,
+        "rating": 4.6,
+        "reviews": 24,
+        "in_stock": true,
+        "listing_url": "https://www.amazon.com/Grooming-Cleaning-Removes-Shampoo-9PCS-Pink/dp/B0F87VS9VT/ref=sr_1_4",
+        "shipping_fee": null,
+        "delivery_countries": [],
+        "description_text": "200+ bought in past month",
+        "review_text": null,
+        "source_site": "amazon"
+      },
+      {
+        "name": "Citrus Magic Pet Rinse-Free Pet Shampoo, 8-Fluid Ounce",
+        "image": "https://m.media-amazon.com/images/I/61rtqKd2JSL._AC_UL320_.jpg",
+        "price": 7.51,
+        "rating": 4.4,
+        "reviews": 2530,
+        "in_stock": true,
+        "listing_url": "https://www.amazon.com/Citrus-Magic-Foaming-Cleanser-8-Ounce/dp/B008JVUDBS/ref=sr_1_5",
+        "shipping_fee": null,
+        "delivery_countries": [],
+        "description_text": "300+ bought in past month",
+        "review_text": null,
+        "source_site": "amazon"
+      }
+    ]
+  },
+  "error": null
+}

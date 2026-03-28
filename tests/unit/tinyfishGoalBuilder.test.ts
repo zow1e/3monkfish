@@ -13,7 +13,9 @@ describe('buildProductSearchGoal', () => {
     expect(goal).toContain('product image');
     expect(goal).toContain('Extract only the first 5 relevant visible products');
     expect(goal).toContain('"image"');
+    expect(goal).toContain('"listing_url"');
     expect(goal).toContain('"name"');
     expect(goal).toContain('Do not click Add to Cart');
+    expect(goal).toContain('Do not return the search-results page URL');
   });
 });

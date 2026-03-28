@@ -27,4 +27,20 @@ describe('normalizeProductListing', () => {
     expect(normalized.delivery_countries).toEqual(['SG', 'MY']);
     expect(normalized.product_keywords.length).toBeGreaterThan(0);
   });
+
+  it('normalizes relative listing urls into absolute source-site links', () => {
+    const normalized = normalizeProductListing(
+      {
+        name: 'Rabbit Treats',
+        image: '/images/rabbit-treats.jpg',
+        listing_url: '/dp/example-rabbit-treats',
+        price: 9.9,
+        source_site: 'amazon',
+      },
+      'rabbit treats',
+    );
+
+    expect(normalized.image).toBe('https://www.amazon.com/images/rabbit-treats.jpg');
+    expect(normalized.listing_url).toBe('https://www.amazon.com/dp/example-rabbit-treats');
+  });
 });

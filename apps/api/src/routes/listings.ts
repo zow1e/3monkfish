@@ -35,8 +35,6 @@ listingsRouter.post('/scrape/search-page', async (req, res) => {
       ...buildListingsScrapeResponse(result),
       requestSource: result.requestSource,
       searchType: result.searchType,
-      petProfile: result.petProfile,
-      presetKeywords: result.presetKeywords,
       combinedKeywords: result.combinedKeywords,
     });
   } catch (error) {

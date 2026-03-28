@@ -22,3 +22,10 @@ export function listingsScrapeUrl(): string {
   if (base) return `${base}/api/listings/scrape`;
   return '/api/listings/scrape';
 }
+
+/** POST search-page TinyFish scrape using the currently selected pet profile context. */
+export function searchPageListingsScrapeUrl(): string {
+  const base = apiBase();
+  if (base) return `${base}/api/listings/scrape/search-page`;
+  return '/api/listings/scrape/search-page';
+}
