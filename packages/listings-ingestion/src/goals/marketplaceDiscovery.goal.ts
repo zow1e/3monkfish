@@ -1,1 +1,0 @@
-export { buildProductSearchGoal } from './productSearchGoal';
