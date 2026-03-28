@@ -1,16 +1,10 @@
-# PetCare Copilot Monorepo
+# 3Rabbits Copilot Monorepo
 
-PetCare Copilot is a backend-first pet management and pet shopping platform. It is designed to help pet owners manage pet profiles, discover relevant pet products, and support future AI-powered pet-care workflows such as concern answering and reminders.
-
-## Submission Links
-
-- Social media post: add your X or LinkedIn post link here
-- Demo: add your YouTube video, Google Drive link, or hosted demo link here
-- Description: PetCare Copilot is a web application concept that combines pet profile management, pet-related shopping discovery, and AI-ready backend services in one platform.
+3Rabbits Copilot is a backend-first pet management and pet shopping platform. It is designed to help pet owners manage pet profiles, discover relevant pet products, and support future AI-powered pet-care workflows such as concern answering and reminders.
 
 ## High-Level Overview
 
-PetCare Copilot focuses on three connected areas:
+3Rabbits Copilot focuses on three connected areas:
 
 - Pet profiles and management
   Store core pet information such as species, breed, age, personality, photos, and ownership relationships.
