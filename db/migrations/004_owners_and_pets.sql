@@ -49,6 +49,8 @@ create table if not exists public.pets (
   owner_notes text,
   ai_summary text,
   photo_url text,
+  photo_bucket text default 'pet-photos',
+  photo_storage_path text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint pets_species_check check (
@@ -73,7 +75,9 @@ comment on table public.pets is 'Pets belonging to an owner; species includes ra
 comment on column public.pets.age is 'Approximate age in free text (e.g. "4 years", "6 months").';
 comment on column public.pets.location is 'Region or country; MVP default Singapore.';
 comment on column public.pets.personality is 'Short description of temperament and behavior.';
-comment on column public.pets.photo_url is 'HTTPS URL to primary pet photo (e.g. Supabase Storage public or signed URL).';
+comment on column public.pets.photo_url is 'Optional cached HTTPS URL; may be derived from photo_bucket + photo_storage_path.';
+comment on column public.pets.photo_bucket is 'Supabase Storage bucket name (default pet-photos).';
+comment on column public.pets.photo_storage_path is 'Object key in bucket, e.g. {owner_id}/{pet_id}.webp.';
 
 -- Supabase only: tie owner row to login identity (safe no-op if auth schema missing).
 do $$

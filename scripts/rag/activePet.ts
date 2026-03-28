@@ -12,6 +12,8 @@ export type ActivePetContext = {
   location: string | null;
   personality: string | null;
   photoUrl: string | null;
+  photoBucket: string | null;
+  photoStoragePath: string | null;
   /** Values for `rag_chunks.species` / `rag_chunks.breed` filters. */
   ragSpecies: string;
   ragBreed: string;
@@ -42,7 +44,8 @@ export function formatPetForPrompt(pet: ActivePetContext): string {
     `- Weight: ${pet.weight ?? "not specified"}`,
     `- Location: ${pet.location ?? "not specified"}`,
     `- Personality: ${pet.personality ?? "not specified"}`,
-    `- Photo URL: ${pet.photoUrl ?? "not uploaded"}`,
+    `- Photo URL: ${pet.photoUrl ?? "not set"}`,
+    `- Photo storage: ${pet.photoBucket ?? "pet-photos"} / ${pet.photoStoragePath ?? "not uploaded"}`,
   ];
   return lines.join("\n");
 }
@@ -68,8 +71,11 @@ export async function loadPetById(
     location: string | null;
     personality: string | null;
     photo_url: string | null;
+    photo_bucket: string | null;
+    photo_storage_path: string | null;
   }>(
-    `select id, owner_id, name, species, breed, age, weight, location, personality, photo_url
+    `select id, owner_id, name, species, breed, age, weight, location, personality,
+            photo_url, photo_bucket, photo_storage_path
      from public.pets
      where id = $1`,
     [petId],
@@ -92,6 +98,8 @@ export async function loadPetById(
     location: row.location,
     personality: row.personality,
     photoUrl: row.photo_url,
+    photoBucket: row.photo_bucket,
+    photoStoragePath: row.photo_storage_path,
     ragSpecies,
     ragBreed,
   };

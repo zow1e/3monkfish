@@ -88,14 +88,15 @@ Prerequisites: Node 20+, Postgres with **pgvector** (e.g. Supabase), `OPENAI_API
 | `db/migrations/003_rag_faq_chunks.sql` | FAQ rows mirrored into `rag_chunks`; run `pnpm rag:ingest` to embed |
 | `db/migrations/004_owners_and_pets.sql` | `owners` (user profiles) + `pets`; optional `auth_user_id` → Supabase Auth |
 | `db/migrations/005_pets_location_personality_age.sql` | Upgrade: `location` / `personality` / rename `age_text` → `age` if you ran an older 004 |
-| `db/migrations/006_pets_photo_url.sql` | `pets.photo_url` for uploaded image URL (e.g. Supabase Storage) |
+| `db/migrations/006_pets_photo_url.sql` | `pets.photo_url` optional cached URL |
+| `db/migrations/007_pets_photo_storage.sql` | `pets.photo_bucket` + `pets.photo_storage_path` for Supabase Storage keys |
 
 ## App database (owners & pets)
 
 Run `db/migrations/004_owners_and_pets.sql` in Supabase after prior migrations. If you previously created `pets` with `age_text` and without `location` / `personality`, also run **`005_pets_location_personality_age.sql`**.
 
 - **`owners`** — name, email (case-insensitive unique), preferences JSON, optional **`auth_user_id`** (FK to `auth.users` on Supabase when the block runs).
-- **`pets`** — many rows can share the same **`owner_id`** (one user, multiple pets). Columns include `breed`, **`age`**, **`weight`**, **`location`** (default **`Singapore`**), **`personality`**, **`photo_url`** (HTTPS URL after upload to storage), species (`dog` / `cat` / `rabbit` / `other`), birthday, notes, etc. Aligned with `packages/types` `Pet`. The RAG CLI uses **`PET_ID` / `--pet-id`** to load the active pet for search and answers.
+- **`pets`** — many rows can share the same **`owner_id`** (one user, multiple pets). Photo fields: **`photo_url`** (optional cached URL), **`photo_bucket`** (default `pet-photos`), **`photo_storage_path`** (object key in that bucket, e.g. `{owner_id}/{pet_id}.webp`). Query pets from PostgREST/API as usual; on the frontend use **`@petcare/pet-photo`** `resolvePetPhotoPublicUrl({ supabaseProjectUrl, photoUrl, photoBucket, photoStoragePath })` for **public** buckets, or the Supabase client’s **`createSignedUrl`** for private buckets. Run **`007_pets_photo_storage.sql`** if you already applied `006` without bucket/path columns.
 
 ## Environment variables
 

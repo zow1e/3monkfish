@@ -15,6 +15,8 @@ export const petsTable = {
     'location',
     'personality',
     'photo_url',
+    'photo_bucket',
+    'photo_storage_path',
     'allergies_json',
     'medications_json',
     'owner_notes',

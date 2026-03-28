@@ -75,6 +75,8 @@ importers:
 
   packages/openai: {}
 
+  packages/pet-photo: {}
+
   packages/prompts: {}
 
   packages/rag: {}

@@ -1,0 +1,11 @@
+{
+  "name": "@petcare/pet-photo",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/resolvePetPhotoUrl.ts",
+  "types": "./src/resolvePetPhotoUrl.ts",
+  "exports": {
+    ".": "./src/resolvePetPhotoUrl.ts"
+  }
+}

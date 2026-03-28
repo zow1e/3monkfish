@@ -27,8 +27,12 @@ export interface Pet {
   location?: string;
   /** Short description of temperament and behavior. */
   personality?: string;
-  /** URL of uploaded primary photo (e.g. Supabase Storage). */
+  /** Cached public/signed URL when available. */
   photoUrl?: string;
+  /** Supabase Storage bucket name (e.g. pet-photos). */
+  photoBucket?: string;
+  /** Object path inside the bucket; use with Storage API for display URLs. */
+  photoStoragePath?: string;
   allergies: string[];
   medications: string[];
   ownerNotes?: string;
