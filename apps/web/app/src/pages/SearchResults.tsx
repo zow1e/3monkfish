@@ -1,6 +1,9 @@
+import { useMemo } from 'react';
 import { Search, SlidersHorizontal, ChevronDown, LayoutGrid, List, Sparkles } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { loadPets } from '../lib/petStore';
 
 const products = [
   {
@@ -16,7 +19,7 @@ const products = [
     badge: null,
     name: 'Premium Shedding Brush',
     price: '$32.00',
-    description: 'Specially designed for golden retrievers to manage dense undercoats comfortably.',
+    description: 'Designed to help manage dense undercoats and seasonal shedding.',
     tags: ['good for shedding', 'ergonomic'],
   },
   {
@@ -30,6 +33,9 @@ const products = [
 ];
 
 export default function SearchResults() {
+  const location = useLocation();
+  const firstPet = useMemo(() => loadPets()[0], [location.pathname, location.key]);
+
   return (
     <div className="min-h-screen bg-surface flex flex-col">
       <Header />
@@ -38,9 +44,9 @@ export default function SearchResults() {
         {/* Page title */}
         <div className="mb-6">
           <h1 className="font-display text-3xl font-semibold text-on-secondary-fixed tracking-tight">
-            Search for Luna
+            Search
           </h1>
-          <p className="text-secondary text-sm mt-1">Personalized results based on your pet profile</p>
+          <p className="text-secondary text-sm mt-1">Browse products and services (demo listings)</p>
         </div>
 
         {/* Controls row */}
@@ -50,7 +56,7 @@ export default function SearchResults() {
             <Search size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-secondary" />
             <input
               type="text"
-              defaultValue="Ask anything about your pet..."
+              placeholder="Search products and services..."
               className="w-full bg-surface-container-lowest rounded-full pl-11 pr-28 py-3.5 text-on-secondary-fixed text-sm outline-none shadow-[0_2px_12px_-2px_rgba(67,70,88,0.08)] border border-outline-variant/15 focus:border-primary/20 transition-colors placeholder:text-secondary/50"
             />
             <button className="absolute right-2 top-1/2 -translate-y-1/2 btn-primary py-2 px-4 text-sm shadow-[0_4px_12px_rgba(154,67,69,0.2)] flex items-center gap-1.5 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 active:scale-95">
@@ -76,22 +82,19 @@ export default function SearchResults() {
           </div>
         </div>
 
-        {/* Pet context card */}
-        <div className="bg-surface-container-lowest rounded-[1.5rem] px-4 py-3 mb-8 inline-flex items-center gap-3 shadow-[0_2px_12px_-2px_rgba(67,70,88,0.06)] border border-outline-variant/10">
-          <div className="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center font-display font-semibold text-secondary text-sm">
-            L
+        {firstPet && (
+          <div className="bg-surface-container-lowest rounded-[1.5rem] px-4 py-3 mb-8 inline-flex items-center gap-3 shadow-[0_2px_12px_-2px_rgba(67,70,88,0.06)] border border-outline-variant/10">
+            <div className="w-9 h-9 rounded-full bg-secondary-container flex items-center justify-center font-display font-semibold text-secondary text-sm">
+              {firstPet.name[0]?.toUpperCase() ?? '?'}
+            </div>
+            <div>
+              <p className="font-semibold text-on-secondary-fixed text-sm">{firstPet.name}</p>
+              <p className="text-secondary text-xs">
+                {[firstPet.breed, firstPet.species, firstPet.ageText].filter(Boolean).join(' · ') || 'Pet profile'}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="font-semibold text-on-secondary-fixed text-sm">Luna</p>
-            <p className="text-secondary text-xs">Golden Retriever · 3 years</p>
-          </div>
-          <span className="bg-secondary-container text-secondary text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
-            Heavy Shedding
-          </span>
-          <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center ml-1">
-            <span className="text-on-primary text-[10px] font-bold">✓</span>
-          </div>
-        </div>
+        )}
 
         {/* Product grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

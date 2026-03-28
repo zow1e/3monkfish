@@ -12,6 +12,7 @@ export const petsTable = {
     'age',
     'sex',
     'weight',
+    'height',
     'location',
     'personality',
     'photo_url',
