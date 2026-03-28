@@ -37,11 +37,28 @@ export const supportedSiteSchema = z.enum(['amazon', 'petmall', 'petlovers']);
 export const tinyFishSearchTypeSchema = z.enum(['product', 'service']);
 export const tinyFishRequestSourceSchema = z.enum(['direct', 'chatbot', 'search-page']);
 
+/**
+ * POST /listings/scrape — matches TinyFish `runScrapeJob` / `runSiteScrape`:
+ * - `keywords`: one search string (spaces OK; used in goal text and URL encoding for Amazon/PetMall).
+ * - `sites`: unique `amazon` | `petmall` | `petlovers`.
+ */
 export const tinyFishScrapeRequestSchema = z.object({
-  keywords: z.string().trim().min(1),
-  sites: z.array(supportedSiteSchema).min(1),
+  keywords: z.preprocess(
+    (v) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim() : v),
+    z.string().min(1),
+  ),
+  sites: z
+    .array(supportedSiteSchema)
+    .min(1)
+    .transform((sites) => [...new Set(sites)]),
   maxProductsPerSite: z.coerce.number().int().min(1).max(10).optional(),
-  countryCode: z.string().trim().min(2).max(2).optional(),
+  countryCode: z.preprocess(
+    (v) => {
+      if (v === undefined || v === null || v === '') return undefined;
+      return typeof v === 'string' ? v.trim().toUpperCase() : v;
+    },
+    z.string().length(2).optional(),
+  ),
   searchType: tinyFishSearchTypeSchema.optional(),
   requestSource: tinyFishRequestSourceSchema.optional(),
   filenameTag: z.string().trim().min(1).optional(),

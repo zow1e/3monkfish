@@ -4,7 +4,11 @@ import { runRagAnswer } from '@petcare/rag-answer';
 
 const bodySchema = z.object({
   message: z.string().min(1).max(12000),
-  petId: z.string().uuid().optional().nullable(),
+  petId: z
+    .preprocess(
+      (v) => (v === '' || v === null || v === undefined ? undefined : v),
+      z.string().uuid().optional(),
+    ),
 });
 
 export const chatRouter = Router();

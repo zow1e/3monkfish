@@ -10,6 +10,9 @@ export default defineConfig({
       '/api': {
         target: 'http://127.0.0.1:4000',
         changeOrigin: true,
+        /** TinyFish scrapes can run for several minutes; default proxy timeouts are too short. */
+        timeout: 600_000,
+        proxyTimeout: 600_000,
       },
     },
   },
