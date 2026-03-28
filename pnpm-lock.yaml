@@ -47,9 +47,21 @@ importers:
 
   apps/api:
     dependencies:
+      '@petcare/listings-ingestion':
+        specifier: workspace:*
+        version: link:../../packages/listings-ingestion
+      '@petcare/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@petcare/validations':
+        specifier: workspace:*
+        version: link:../../packages/validations
       express:
         specifier: ^4.21.2
         version: 4.22.1
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
     devDependencies:
       tsx:
         specifier: ^4.19.2
@@ -58,6 +70,13 @@ importers:
   apps/web: {}
 
   apps/worker:
+    dependencies:
+      '@petcare/listings-ingestion':
+        specifier: workspace:*
+        version: link:../../packages/listings-ingestion
+      '@petcare/types':
+        specifier: workspace:*
+        version: link:../../packages/types
     devDependencies:
       tsx:
         specifier: ^4.19.2
@@ -65,13 +84,27 @@ importers:
 
   packages/analytics: {}
 
-  packages/config: {}
+  packages/config:
+    dependencies:
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
 
   packages/db: {}
 
   packages/knowledge-base: {}
 
-  packages/listings-ingestion: {}
+  packages/listings-ingestion:
+    dependencies:
+      '@petcare/config':
+        specifier: workspace:*
+        version: link:../config
+      '@petcare/types':
+        specifier: workspace:*
+        version: link:../types
+      '@petcare/validations':
+        specifier: workspace:*
+        version: link:../validations
 
   packages/openai: {}
 
@@ -83,7 +116,11 @@ importers:
 
   packages/types: {}
 
-  packages/validations: {}
+  packages/validations:
+    dependencies:
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
 
   tests: {}
 
