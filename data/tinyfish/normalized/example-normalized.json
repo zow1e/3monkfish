@@ -1,10 +1,21 @@
-[
-  {
-    "id": "tinyfish-Happy Paws Vet",
-    "listingType": "provider",
-    "title": "Happy Paws Vet",
-    "source": "tinyfish",
-    "freshnessTimestamp": "2026-03-01T00:00:00.000Z",
-    "payload": { "city": "Austin" }
-  }
-]
+{
+  "products": [
+    {
+      "id": "a1b2c3d4e5f67890",
+      "source_site": "amazon",
+      "search_keywords": "rabbit treats",
+      "name": "(85g) Oxbow Natural Baked Treats (Apple & Banana)",
+      "image": "https://m.media-amazon.com/images/I/81RR+ZCI58L._AC_UL320_.jpg",
+      "price": 9.9,
+      "rating": 4.7,
+      "reviews": 2603,
+      "in_stock": true,
+      "listing_url": "https://www.amazon.com/example-rabbit-treats",
+      "shipping_fee": null,
+      "delivery_countries": ["SG"],
+      "product_keywords": ["rabbit", "treats", "oxbow", "apple", "banana"],
+      "description_text": "Natural baked rabbit treats with apple and banana flavor.",
+      "review_text": "Owners say rabbits love the flavor and the bag lasts well."
+    }
+  ]
+}
