@@ -9,5 +9,11 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },
-  "devDependencies": { "tsx": "^4.19.2" }
+  "devDependencies": {
+    "tsx": "^4.19.2"
+  },
+  "dependencies": {
+    "@petcare/listings-ingestion": "workspace:*",
+    "@petcare/types": "workspace:*"
+  }
 }

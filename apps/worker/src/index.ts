@@ -1,5 +1,5 @@
 export const startWorker = async () => {
-  // TODO: initialize queue consumers/schedulers.
+  // TODO: wire queue consumers for TinyFish scrape jobs and scheduled refreshes.
   console.log('[worker] started');
 };
 

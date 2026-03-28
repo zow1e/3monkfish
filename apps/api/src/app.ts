@@ -20,6 +20,7 @@ export const createApp = () => {
   app.use('/chat', chatRouter);
   app.use('/knowledge-base', knowledgeBaseRouter);
   app.use('/listings', listingsRouter);
+  app.use('/api/listings', listingsRouter);
   app.use('/ingestion', ingestionRouter);
   return app;
 };
