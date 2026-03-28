@@ -2,10 +2,10 @@ import { Rabbit, Bell, User } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const navItems = [
-  { label: 'Dashboard', to: '/' },
+  { label: 'Dashboard', to: '/dashboard' },
   { label: 'My Pets', to: '/pet-profile' },
+  { label: 'Explore', to: '/search' },
   { label: 'AI Assistant', to: '/ai-chat' },
-  { label: 'Search', to: '/search' },
 ];
 
 export default function Header() {
@@ -22,8 +22,7 @@ export default function Header() {
 
       <nav className="hidden md:flex items-center gap-1">
         {navItems.map((item) => {
-          const isActive =
-            location.pathname === item.to || (item.to === '/' && location.pathname === '/dashboard');
+          const isActive = location.pathname === item.to;
           return (
             <Link
               key={item.label}
@@ -42,14 +41,12 @@ export default function Header() {
 
       <div className="flex items-center gap-3">
         <button
-          type="button"
           className="p-2 text-secondary hover:text-on-secondary-fixed hover:bg-surface-container-low rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 active:scale-95"
           aria-label="Notifications"
         >
           <Bell size={18} />
         </button>
         <button
-          type="button"
           className="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-secondary hover:bg-secondary-container/80 transition-colors focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 active:scale-95"
           aria-label="Profile"
         >

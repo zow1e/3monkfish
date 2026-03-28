@@ -16,11 +16,16 @@ export const buildTinyFishFilename = (
   timestamp: string,
   site: SupportedSite | 'all-sites',
   keywords: string,
-): string => `${sanitizeTimestampForFilename(timestamp)}__${site}__${slugifyKeywords(keywords)}.json`;
+  variant?: string,
+): string => {
+  const variantPrefix = variant ? `${variant}__` : '';
+  return `${sanitizeTimestampForFilename(timestamp)}__${variantPrefix}${site}__${slugifyKeywords(keywords)}.json`;
+};
 
 export const buildTinyFishFilePath = (
   baseDir: string,
   timestamp: string,
   site: SupportedSite | 'all-sites',
   keywords: string,
-): string => path.join(baseDir, buildTinyFishFilename(timestamp, site, keywords));
+  variant?: string,
+): string => path.join(baseDir, buildTinyFishFilename(timestamp, site, keywords, variant));

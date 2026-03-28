@@ -23,6 +23,9 @@ export const runScrapeJob = async (
           site,
           maxProductsPerSite: request.maxProductsPerSite,
           countryCode: request.countryCode,
+          searchType: request.searchType,
+          requestSource: request.requestSource,
+          filenameTag: request.filenameTag,
         },
         {
           env,
@@ -36,7 +39,13 @@ export const runScrapeJob = async (
   const aggregateFilePath =
     request.sites.length > 1
       ? await writeJsonFile(
-          buildTinyFishFilePath(env.TINYFISH_NORMALIZED_DATA_DIR, startedAt, 'all-sites', request.keywords),
+          buildTinyFishFilePath(
+            env.TINYFISH_NORMALIZED_DATA_DIR,
+            startedAt,
+            'all-sites',
+            request.keywords,
+            [request.requestSource, request.searchType, request.filenameTag].filter(Boolean).join('__') || undefined,
+          ),
           { products: normalizedResults },
         )
       : undefined;
@@ -60,6 +69,8 @@ export const runScrapeJob = async (
     keywords: request.keywords,
     requestedSites: request.sites,
     status,
+    searchType: request.searchType,
+    requestSource: request.requestSource,
     site_outcomes: siteOutcomes,
     normalized_results: normalizedResults,
     files: {

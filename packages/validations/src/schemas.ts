@@ -34,6 +34,8 @@ export const chatbotResponseSchema = z.object({
 });
 
 export const supportedSiteSchema = z.enum(['amazon', 'petmall', 'petlovers']);
+export const tinyFishSearchTypeSchema = z.enum(['product', 'service']);
+export const tinyFishRequestSourceSchema = z.enum(['direct', 'chatbot', 'search-page']);
 
 /**
  * POST /listings/scrape — matches TinyFish `runScrapeJob` / `runSiteScrape`:
@@ -57,6 +59,9 @@ export const tinyFishScrapeRequestSchema = z.object({
     },
     z.string().length(2).optional(),
   ),
+  searchType: tinyFishSearchTypeSchema.optional(),
+  requestSource: tinyFishRequestSourceSchema.optional(),
+  filenameTag: z.string().trim().min(1).optional(),
 });
 
 const nullableTextSchema = z.string().trim().min(1).nullable().optional();
@@ -112,4 +117,32 @@ export const tinyFishRunOutcomeSchema = z.object({
   used_stealth_fallback: z.boolean().optional(),
   raw_file_path: z.string().optional(),
   normalized_file_path: z.string().optional(),
+});
+
+export const chatbotKeywordScrapeRequestSchema = z.object({
+  sites: z.array(supportedSiteSchema).min(1),
+  maxProductsPerSite: z.coerce.number().int().min(1).max(10).optional(),
+  countryCode: z.string().trim().min(2).max(2).optional(),
+  placeholderKeywords: z.array(z.string().trim().min(1)).optional(),
+  searchType: tinyFishSearchTypeSchema.optional(),
+});
+
+export const petProfileKeywordPresetSchema = z.object({
+  petId: z.string().min(1),
+  petName: z.string().min(1),
+  species: z.string().min(1),
+  breed: z.string().min(1).optional(),
+  allergies: z.array(z.string().min(1)).optional(),
+  sensitivities: z.array(z.string().min(1)).optional(),
+  productKeywords: z.array(z.string().min(1)),
+  serviceKeywords: z.array(z.string().min(1)),
+});
+
+export const searchPageScrapeRequestSchema = z.object({
+  petProfile: petProfileKeywordPresetSchema,
+  searchType: tinyFishSearchTypeSchema,
+  searchInput: z.string().trim().min(1),
+  sites: z.array(supportedSiteSchema).min(1),
+  maxProductsPerSite: z.coerce.number().int().min(1).max(10).optional(),
+  countryCode: z.string().trim().min(2).max(2).optional(),
 });

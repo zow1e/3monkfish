@@ -3,13 +3,16 @@
 ## Request flow
 
 1. API receives `POST /api/listings/scrape`.
-2. Request body is validated with shared Zod schemas.
-3. `packages/listings-ingestion` selects a per-site strategy and builds a strict TinyFish goal.
-4. TinyFish `/run` executes first with `browser_profile: "lite"`.
-5. If the result looks blocked or empty, supported sites can retry once with `browser_profile: "stealth"` and optional proxy country config.
-6. Raw output is written to `data/tinyfish/raw`.
-7. Products are normalized, keywords are derived from description and review text, and normalized output is written to `data/tinyfish/normalized`.
-8. API returns a top-level `products` array that intentionally mirrors TinyFish playground-style output for easier debugging.
+2. API can also receive `POST /api/listings/scrape/chatbot` or `POST /api/listings/scrape/search-page`.
+3. Request body is validated with shared Zod schemas.
+4. For chatbot flow, placeholder chatbot keywords are resolved first.
+5. For search-page flow, pet-profile preset keywords are merged with the entered search term and tagged as a `product` or `service` search.
+6. `packages/listings-ingestion` selects a per-site strategy and builds a strict TinyFish goal.
+7. TinyFish `/run` executes first with `browser_profile: "lite"`.
+8. If the result looks blocked or empty, supported sites can retry once with `browser_profile: "stealth"` and optional proxy country config.
+9. Raw output is written to `data/tinyfish/raw`.
+10. Products are normalized, keywords are derived from description and review text, and normalized output is written to `data/tinyfish/normalized`.
+11. API returns a top-level `products` array that intentionally mirrors TinyFish playground-style output for easier debugging.
 
 ## Goal design
 

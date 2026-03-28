@@ -7,3 +7,4 @@ Lean TinyFish MVP scraping pipeline for ecommerce product listings.
 - Raw TinyFish output persistence under `data/tinyfish/raw`
 - Normalized product listing output under `data/tinyfish/normalized`
 - Lightweight site strategies, blocked detection, keyword extraction, and JSON writers
+- Supports direct scrape requests, chatbot-driven keyword scraping, and selected-pet search-page scraping through the API layer
