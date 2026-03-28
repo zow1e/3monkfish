@@ -1,12 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Send, Sparkles, ListChecks, Phone } from 'lucide-react';
+import { Send, Sparkles, ListChecks, Phone, ShoppingBag } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import Header from '../components/Header';
-import { chatPostUrl } from '../lib/chatApi';
+import { apiHealthUrl, chatPostUrl, listingsScrapeUrl } from '../lib/chatApi';
+import { extractKeywordsFromPlainText, ragAnswerToPlainText } from '../lib/ragKeywords';
+import {
+  parseAllProductsFromListingsResponse,
+  scrapeJobStatus,
+  type ScrapedProduct,
+} from '../lib/listingsScrapeResponse';
+import { buildListingsScrapeBody, buildTinyfishKeywordsString } from '../lib/tinyfishScrapeRequest';
 import { loadPets } from '../lib/petStore';
 import { HOLLAND_LOP_FAQ_QUESTIONS } from '../data/hollandLopFaq';
 
 type Message = { role: 'ai' | 'user'; text: string };
+
+const TINYFISH_SITES = ['amazon', 'petmall', 'petlovers'] as const;
+/** Max allowed by `tinyFishScrapeRequestSchema` — request as many products per site as the API permits. */
+const MAX_PRODUCTS_PER_SITE = 10;
 
 function formatSpecies(s: string): string {
   if (!s) return '';
@@ -26,6 +37,29 @@ export default function AIChat() {
   const [input, setInput] = useState('');
   const [active, setActive] = useState(0);
   const [pending, setPending] = useState(false);
+  /** null = not checked yet; false = API unreachable (Vite proxy will fail chat). */
+  const [apiReachable, setApiReachable] = useState<boolean | null>(null);
+
+  /** Up to 15 tokens from the latest RAG plain-text answer (for TinyFish `keywords` string). */
+  const [lastKeywords, setLastKeywords] = useState<string[]>([]);
+  const [scrapeLoading, setScrapeLoading] = useState(false);
+  const [scrapeError, setScrapeError] = useState<string | null>(null);
+  const [recommendedProducts, setRecommendedProducts] = useState<ScrapedProduct[]>([]);
+  const [lastScrapeStatus, setLastScrapeStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(apiHealthUrl())
+      .then((r) => {
+        if (!cancelled) setApiReachable(r.ok);
+      })
+      .catch(() => {
+        if (!cancelled) setApiReachable(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (pets.length === 0) return;
@@ -72,7 +106,18 @@ export default function AIChat() {
         typeof (data as { answer: unknown }).answer === 'string'
           ? (data as { answer: string }).answer
           : '';
-      setMsgs((m) => [...m, { role: 'ai', text: answer.trim() || 'No answer returned.' }]);
+      const plain = ragAnswerToPlainText(answer.trim() || 'No answer returned.');
+      let kws = extractKeywordsFromPlainText(plain, 15);
+      if (kws.length === 0) {
+        kws = extractKeywordsFromPlainText(trimmed, 15);
+      }
+      if (kws.length === 0) {
+        kws = ['pet', 'care'];
+      }
+      setLastKeywords(kws);
+      setRecommendedProducts([]);
+      setScrapeError(null);
+      setMsgs((m) => [...m, { role: 'ai', text: plain }]);
     } catch (e) {
       const hint =
         e instanceof TypeError && e.message === 'Failed to fetch'
@@ -98,12 +143,82 @@ export default function AIChat() {
     setInput(question);
   }
 
-  return (
-    <div className="min-h-screen bg-surface flex flex-col">
-      <Header />
+  async function runTinyfishProductSearch() {
+    if (lastKeywords.length === 0 || scrapeLoading) return;
+    const keywordsStr = buildTinyfishKeywordsString(lastKeywords);
+    if (!keywordsStr) {
+      setScrapeError('No valid keywords to send to TinyFish.');
+      return;
+    }
+    setScrapeLoading(true);
+    setScrapeError(null);
+    setLastScrapeStatus(null);
+    try {
+      const res = await fetch(listingsScrapeUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(
+          buildListingsScrapeBody({
+            keywords: keywordsStr,
+            maxProductsPerSite: MAX_PRODUCTS_PER_SITE,
+            sites: TINYFISH_SITES,
+          }),
+        ),
+      });
+      const data: unknown = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        let msg = `Request failed (${res.status})`;
+        if (typeof data === 'object' && data !== null) {
+          const d = data as {
+            error?: unknown;
+            errors?: unknown;
+            status?: unknown;
+          };
+          if (typeof d.error === 'string' && d.error.trim()) {
+            msg = d.error;
+          } else if (d.errors !== undefined) {
+            msg = `${msg}: ${JSON.stringify(d.errors)}`;
+          } else if (d.status === 'invalid_request') {
+            msg = `${msg}: ${JSON.stringify(data)}`;
+          }
+        }
+        setScrapeError(msg);
+        setRecommendedProducts([]);
+        setLastScrapeStatus(null);
+        return;
+      }
+      setLastScrapeStatus(scrapeJobStatus(data));
+      const all = parseAllProductsFromListingsResponse(data);
+      setRecommendedProducts(all);
+    } catch (e) {
+      setScrapeError(e instanceof Error ? e.message : 'Product search failed');
+      setRecommendedProducts([]);
+      setLastScrapeStatus(null);
+    } finally {
+      setScrapeLoading(false);
+    }
+  }
 
-      <div className="flex flex-1 max-w-[1200px] mx-auto w-full overflow-hidden">
-        <aside className="w-64 shrink-0 border-r border-outline-variant/15 flex flex-col px-4 py-6">
+  return (
+    <div className="h-screen min-h-0 bg-surface flex flex-col overflow-hidden">
+      <div className="shrink-0">
+        <Header />
+      </div>
+
+      {apiReachable === false && (
+        <div
+          className="shrink-0 bg-surface-container-low border-b border-outline-variant/25 px-4 py-3 text-center text-sm text-on-secondary-fixed"
+          role="status"
+        >
+          API unreachable (nothing on port 4000). From the repo root run{' '}
+          <code className="text-xs bg-surface-container-low px-1.5 py-0.5 rounded">pnpm dev:stack</code> or{' '}
+          <code className="text-xs bg-surface-container-low px-1.5 py-0.5 rounded">pnpm dev:api</code> in a second
+          terminal, then refresh.
+        </div>
+      )}
+
+      <div className="flex flex-1 min-h-0 max-w-[1200px] mx-auto w-full overflow-hidden">
+        <aside className="w-64 shrink-0 border-r border-outline-variant/15 flex flex-col px-4 py-6 min-h-0">
           <h2 className="text-xs font-semibold text-secondary uppercase tracking-widest mb-4 px-2">
             Your pets
           </h2>
@@ -145,14 +260,14 @@ export default function AIChat() {
           )}
         </aside>
 
-        <main className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex items-center justify-center py-4 border-b border-outline-variant/10">
+        <main className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <div className="shrink-0 flex items-center justify-center py-4 border-b border-outline-variant/10">
             <span className="bg-surface-container-low text-secondary text-xs font-semibold px-4 py-1.5 rounded-full">
               Holland Lop FAQ
             </span>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
+          <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-5">
             {msgs.map((m, i) => (
               <div
                 key={i}
@@ -193,7 +308,79 @@ export default function AIChat() {
             )}
           </div>
 
-          <div className="px-6 pb-3">
+          {lastKeywords.length > 0 && (
+            <div className="shrink-0 px-6 pb-4 border-t border-outline-variant/10 space-y-3 bg-surface">
+              <p className="text-[10px] font-semibold text-secondary uppercase tracking-widest">
+                Keywords for product search (from last answer)
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {lastKeywords.map((kw) => (
+                  <span
+                    key={kw}
+                    className="text-[11px] px-2.5 py-1 rounded-full bg-surface-container-low border border-outline-variant/20 text-on-secondary-fixed"
+                  >
+                    {kw}
+                  </span>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => void runTinyfishProductSearch()}
+                disabled={scrapeLoading || apiReachable === false}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-on-primary text-sm font-semibold shadow-[0_4px_12px_rgba(154,67,69,0.25)] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
+              >
+                <ShoppingBag size={16} />
+                {scrapeLoading ? 'Searching TinyFish…' : 'Find recommended products'}
+              </button>
+              {scrapeError && (
+                <p className="text-xs text-red-600 dark:text-red-400">{scrapeError}</p>
+              )}
+              {!scrapeLoading && !scrapeError && lastScrapeStatus && (
+                <p className="text-[11px] text-secondary">
+                  TinyFish job: <span className="font-semibold">{lastScrapeStatus}</span>
+                  {recommendedProducts.length > 0
+                    ? ` · ${recommendedProducts.length} product${recommendedProducts.length === 1 ? '' : 's'}`
+                    : ' · no products in normalized results'}
+                </p>
+              )}
+              {recommendedProducts.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  {recommendedProducts.map((p, idx) => (
+                    <a
+                      key={p.id ?? p.listing_url ?? `${p.name ?? 'p'}-${p.source_site}-${idx}`}
+                      href={p.listing_url ?? undefined}
+                      target={p.listing_url ? '_blank' : undefined}
+                      rel={p.listing_url ? 'noreferrer noopener' : undefined}
+                      className={`block rounded-[1.25rem] border border-outline-variant/15 bg-surface-container-lowest overflow-hidden text-left ${
+                        p.listing_url ? 'hover:border-primary/30 transition-colors' : 'pointer-events-none opacity-80'
+                      }`}
+                    >
+                      {p.image && (
+                        <img
+                          src={p.image}
+                          alt=""
+                          className="w-full h-28 object-cover bg-surface-container-low"
+                        />
+                      )}
+                      <div className="p-3 space-y-1">
+                        <p className="text-xs font-semibold text-on-secondary-fixed line-clamp-2">
+                          {p.name ?? 'Product'}
+                        </p>
+                        <p className="text-[11px] text-secondary">
+                          {p.price != null ? `$${p.price.toFixed(2)}` : '—'} · {p.source_site}
+                        </p>
+                        {p.rating != null && (
+                          <p className="text-[10px] text-secondary">★ {p.rating.toFixed(1)}</p>
+                        )}
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="shrink-0 px-6 pb-3">
             <p className="text-[10px] font-semibold text-secondary uppercase tracking-widest mb-2">
               FAQ questions
             </p>
@@ -211,7 +398,7 @@ export default function AIChat() {
             </div>
           </div>
 
-          <div className="px-6 pb-6">
+          <div className="shrink-0 px-6 pb-6">
             <div className="bg-surface-container-lowest border border-outline-variant/20 rounded-[2rem] flex items-center px-5 py-3 shadow-[0_4px_16px_-4px_rgba(67,70,88,0.08)]">
               <input
                 type="text"

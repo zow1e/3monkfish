@@ -23,6 +23,8 @@ export const createApp = () => {
   });
   app.use(express.json());
   app.use('/health', healthRouter);
+  /** Same health check under `/api/*` so Vite proxy `/api` can reach it. */
+  app.use('/api/health', healthRouter);
   app.use('/owners', ownersRouter);
   app.use('/pets', petsRouter);
   app.use('/appointments', appointmentsRouter);

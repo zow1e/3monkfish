@@ -5,6 +5,9 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
+    "dev:api": "pnpm --filter @petcare/api dev",
+    "dev:web": "pnpm --filter app dev",
+    "dev:stack": "pnpm --parallel --filter app --filter @petcare/api dev",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
