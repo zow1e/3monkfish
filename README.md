@@ -27,7 +27,7 @@ PetCare Copilot is a backend-first AI pet-care assistant scaffold. It is designe
 - `packages/*` - reusable domain and platform packages
 - `data/tinyfish/*` - raw and normalized listing artifacts
 - `data/knowledge/*` - curated markdown for the Holland Lop RAG MVP seed
-- `db/migrations/*` - SQL for `rag_chunks` (pgvector) and `faq_articles` (curated FAQs)
+- `db/migrations/*` - SQL for `rag_chunks`, `faq_articles`, and app tables (`owners`, `pets`)
 - `docs/*` - architecture, API, prompts, runbooks, eval docs
 
 ## Quick start
@@ -74,6 +74,14 @@ Prerequisites: Node 20+, Postgres with **pgvector** (e.g. Supabase), `OPENAI_API
 | `db/migrations/001_rag_chunks.sql` | `rag_chunks` table + vector column |
 | `db/migrations/002_faq_articles.sql` | `faq_articles` + 3 seeded Holland Lop questions |
 | `db/migrations/003_rag_faq_chunks.sql` | FAQ rows mirrored into `rag_chunks`; run `pnpm rag:ingest` to embed |
+| `db/migrations/004_owners_and_pets.sql` | `owners` (user profiles) + `pets`; optional `auth_user_id` → Supabase Auth |
+
+## App database (owners & pets)
+
+Run `db/migrations/004_owners_and_pets.sql` in Supabase after prior migrations. This creates:
+
+- **`owners`** — name, email (case-insensitive unique), preferences JSON, optional **`auth_user_id`** (FK to `auth.users` on Supabase when the block runs).
+- **`pets`** — `owner_id` FK, species (`dog` / `cat` / `rabbit` / `other`), profile fields aligned with `packages/types` Owner/Pet shapes.
 
 ## Environment variables
 
