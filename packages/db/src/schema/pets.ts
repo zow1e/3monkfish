@@ -14,6 +14,7 @@ export const petsTable = {
     'weight',
     'location',
     'personality',
+    'photo_url',
     'allergies_json',
     'medications_json',
     'owner_notes',

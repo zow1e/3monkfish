@@ -48,6 +48,7 @@ create table if not exists public.pets (
   medications_json jsonb not null default '[]'::jsonb,
   owner_notes text,
   ai_summary text,
+  photo_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint pets_species_check check (
@@ -72,6 +73,7 @@ comment on table public.pets is 'Pets belonging to an owner; species includes ra
 comment on column public.pets.age is 'Approximate age in free text (e.g. "4 years", "6 months").';
 comment on column public.pets.location is 'Region or country; MVP default Singapore.';
 comment on column public.pets.personality is 'Short description of temperament and behavior.';
+comment on column public.pets.photo_url is 'HTTPS URL to primary pet photo (e.g. Supabase Storage public or signed URL).';
 
 -- Supabase only: tie owner row to login identity (safe no-op if auth schema missing).
 do $$

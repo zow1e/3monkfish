@@ -88,13 +88,14 @@ Prerequisites: Node 20+, Postgres with **pgvector** (e.g. Supabase), `OPENAI_API
 | `db/migrations/003_rag_faq_chunks.sql` | FAQ rows mirrored into `rag_chunks`; run `pnpm rag:ingest` to embed |
 | `db/migrations/004_owners_and_pets.sql` | `owners` (user profiles) + `pets`; optional `auth_user_id` → Supabase Auth |
 | `db/migrations/005_pets_location_personality_age.sql` | Upgrade: `location` / `personality` / rename `age_text` → `age` if you ran an older 004 |
+| `db/migrations/006_pets_photo_url.sql` | `pets.photo_url` for uploaded image URL (e.g. Supabase Storage) |
 
 ## App database (owners & pets)
 
 Run `db/migrations/004_owners_and_pets.sql` in Supabase after prior migrations. If you previously created `pets` with `age_text` and without `location` / `personality`, also run **`005_pets_location_personality_age.sql`**.
 
 - **`owners`** — name, email (case-insensitive unique), preferences JSON, optional **`auth_user_id`** (FK to `auth.users` on Supabase when the block runs).
-- **`pets`** — many rows can share the same **`owner_id`** (one user, multiple pets). Columns include `breed`, **`age`**, **`weight`**, **`location`** (default **`Singapore`**), **`personality`**, species (`dog` / `cat` / `rabbit` / `other`), birthday, notes, etc. Aligned with `packages/types` `Pet`. The RAG CLI uses **`PET_ID` / `--pet-id`** to load the active pet for search and answers.
+- **`pets`** — many rows can share the same **`owner_id`** (one user, multiple pets). Columns include `breed`, **`age`**, **`weight`**, **`location`** (default **`Singapore`**), **`personality`**, **`photo_url`** (HTTPS URL after upload to storage), species (`dog` / `cat` / `rabbit` / `other`), birthday, notes, etc. Aligned with `packages/types` `Pet`. The RAG CLI uses **`PET_ID` / `--pet-id`** to load the active pet for search and answers.
 
 ## Environment variables
 

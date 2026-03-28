@@ -11,6 +11,7 @@ export type ActivePetContext = {
   weight: string | null;
   location: string | null;
   personality: string | null;
+  photoUrl: string | null;
   /** Values for `rag_chunks.species` / `rag_chunks.breed` filters. */
   ragSpecies: string;
   ragBreed: string;
@@ -41,6 +42,7 @@ export function formatPetForPrompt(pet: ActivePetContext): string {
     `- Weight: ${pet.weight ?? "not specified"}`,
     `- Location: ${pet.location ?? "not specified"}`,
     `- Personality: ${pet.personality ?? "not specified"}`,
+    `- Photo URL: ${pet.photoUrl ?? "not uploaded"}`,
   ];
   return lines.join("\n");
 }
@@ -65,8 +67,9 @@ export async function loadPetById(
     weight: string | null;
     location: string | null;
     personality: string | null;
+    photo_url: string | null;
   }>(
-    `select id, owner_id, name, species, breed, age, weight, location, personality
+    `select id, owner_id, name, species, breed, age, weight, location, personality, photo_url
      from public.pets
      where id = $1`,
     [petId],
@@ -88,6 +91,7 @@ export async function loadPetById(
     weight: row.weight,
     location: row.location,
     personality: row.personality,
+    photoUrl: row.photo_url,
     ragSpecies,
     ragBreed,
   };

@@ -27,6 +27,8 @@ export interface Pet {
   location?: string;
   /** Short description of temperament and behavior. */
   personality?: string;
+  /** URL of uploaded primary photo (e.g. Supabase Storage). */
+  photoUrl?: string;
   allergies: string[];
   medications: string[];
   ownerNotes?: string;
