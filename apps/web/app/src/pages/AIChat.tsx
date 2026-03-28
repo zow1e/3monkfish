@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Send, Sparkles, ListChecks, Phone, ShoppingBag } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import Header from '../components/Header';
@@ -24,6 +24,54 @@ function formatSpecies(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
+/** Human-readable lines for the TinyFish debug panel (matches `ListingsScrapeApiResponse` keys). */
+function linesFromScrapeResponse(data: unknown): string[] {
+  const lines: string[] = [];
+  if (typeof data !== 'object' || data === null) {
+    return ['(response is not a JSON object)'];
+  }
+  const d = data as Record<string, unknown>;
+  if (typeof d.status === 'string') lines.push(`aggregate job status: ${d.status}`);
+  if (typeof d.keywords === 'string') lines.push(`keywords echoed: ${d.keywords}`);
+  if (Array.isArray(d.requestedSites)) {
+    lines.push(`sites: ${d.requestedSites.map(String).join(', ')}`);
+  }
+  if (typeof d.startedAt === 'string' && typeof d.completedAt === 'string') {
+    lines.push('server window:');
+    lines.push(`  startedAt: ${d.startedAt}`);
+    lines.push(`  completedAt: ${d.completedAt}`);
+  }
+  if (Array.isArray(d.products)) {
+    lines.push(`normalized products (top-level array): ${d.products.length}`);
+  }
+  const outcomes = d.siteOutcomes;
+  if (Array.isArray(outcomes) && outcomes.length > 0) {
+    lines.push('per-site:');
+    for (const o of outcomes) {
+      if (typeof o !== 'object' || o === null) continue;
+      const r = o as Record<string, unknown>;
+      const site = typeof r.source_site === 'string' ? r.source_site : '?';
+      const st = typeof r.status === 'string' ? r.status : '?';
+      const nr = r.normalized_results;
+      const n = Array.isArray(nr) ? nr.length : 0;
+      const stealth = r.used_stealth_fallback === true ? ' · stealth fallback' : '';
+      let row = `  ${site}: ${st} · ${n} product(s)${stealth}`;
+      if (typeof r.error_message === 'string' && r.error_message.trim()) {
+        row += ` · ${r.error_message}`;
+      }
+      lines.push(row);
+    }
+  }
+  const files = d.files;
+  if (files && typeof files === 'object' && files !== null) {
+    const f = files as { raw?: unknown; normalized?: unknown };
+    const rawC = Array.isArray(f.raw) ? f.raw.length : 0;
+    const normC = Array.isArray(f.normalized) ? f.normalized.length : 0;
+    lines.push(`files on API host: raw=${rawC} · normalized=${normC}`);
+  }
+  return lines;
+}
+
 export default function AIChat() {
   const location = useLocation();
   const pets = useMemo(() => loadPets(), [location.pathname, location.key]);
@@ -46,6 +94,19 @@ export default function AIChat() {
   const [scrapeError, setScrapeError] = useState<string | null>(null);
   const [recommendedProducts, setRecommendedProducts] = useState<ScrapedProduct[]>([]);
   const [lastScrapeStatus, setLastScrapeStatus] = useState<string | null>(null);
+  /** TinyFish scrape: request/response trace for debugging (shown below the button). */
+  const [scrapeDebugLines, setScrapeDebugLines] = useState<string[]>([]);
+  const [scrapeElapsedLabel, setScrapeElapsedLabel] = useState('0.0s');
+  const scrapeStartedAtRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!scrapeLoading) return;
+    const id = window.setInterval(() => {
+      const t0 = scrapeStartedAtRef.current;
+      if (t0 != null) setScrapeElapsedLabel(`${((Date.now() - t0) / 1000).toFixed(1)}s`);
+    }, 250);
+    return () => window.clearInterval(id);
+  }, [scrapeLoading]);
 
   useEffect(() => {
     let cancelled = false;
@@ -153,18 +214,27 @@ export default function AIChat() {
     setScrapeLoading(true);
     setScrapeError(null);
     setLastScrapeStatus(null);
+    const url = listingsScrapeUrl();
+    const body = buildListingsScrapeBody({
+      keywords: keywordsStr,
+      maxProductsPerSite: MAX_PRODUCTS_PER_SITE,
+      sites: TINYFISH_SITES,
+    });
+    scrapeStartedAtRef.current = Date.now();
+    setScrapeElapsedLabel('0.0s');
+    setScrapeDebugLines([
+      `[${new Date().toISOString()}] POST ${url}`,
+      `keywords: ${keywordsStr}`,
+      `sites: ${TINYFISH_SITES.join(', ')} · maxProductsPerSite: ${MAX_PRODUCTS_PER_SITE}`,
+      'Waiting for API (TinyFish runs remotely; this often takes 1–5+ minutes)…',
+    ]);
     try {
-      const res = await fetch(listingsScrapeUrl(), {
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(
-          buildListingsScrapeBody({
-            keywords: keywordsStr,
-            maxProductsPerSite: MAX_PRODUCTS_PER_SITE,
-            sites: TINYFISH_SITES,
-          }),
-        ),
+        body: JSON.stringify(body),
       });
+      const elapsedMs = scrapeStartedAtRef.current != null ? Date.now() - scrapeStartedAtRef.current : 0;
       const data: unknown = await res.json().catch(() => ({}));
       if (!res.ok) {
         let msg = `Request failed (${res.status})`;
@@ -182,16 +252,34 @@ export default function AIChat() {
             msg = `${msg}: ${JSON.stringify(data)}`;
           }
         }
+        setScrapeDebugLines((prev) => [
+          ...prev,
+          `HTTP ${res.status} ${res.statusText} · ${(elapsedMs / 1000).toFixed(1)}s`,
+          ...(typeof data === 'object' && data !== null
+            ? [`response body: ${JSON.stringify(data).slice(0, 800)}${JSON.stringify(data).length > 800 ? '…' : ''}`]
+            : ['(could not parse JSON body)']),
+        ]);
         setScrapeError(msg);
         setRecommendedProducts([]);
         setLastScrapeStatus(null);
         return;
       }
+      setScrapeDebugLines((prev) => [
+        ...prev,
+        `HTTP 200 OK · ${(elapsedMs / 1000).toFixed(1)}s`,
+        ...linesFromScrapeResponse(data),
+      ]);
       setLastScrapeStatus(scrapeJobStatus(data));
       const all = parseAllProductsFromListingsResponse(data);
       setRecommendedProducts(all);
     } catch (e) {
-      setScrapeError(e instanceof Error ? e.message : 'Product search failed');
+      const elapsedMs = scrapeStartedAtRef.current != null ? Date.now() - scrapeStartedAtRef.current : 0;
+      const errText = e instanceof Error ? e.message : 'Product search failed';
+      setScrapeDebugLines((prev) => [
+        ...prev,
+        `Network / client error after ${(elapsedMs / 1000).toFixed(1)}s: ${errText}`,
+      ]);
+      setScrapeError(errText);
       setRecommendedProducts([]);
       setLastScrapeStatus(null);
     } finally {
@@ -330,8 +418,21 @@ export default function AIChat() {
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-on-primary text-sm font-semibold shadow-[0_4px_12px_rgba(154,67,69,0.25)] hover:opacity-90 transition-opacity disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
               >
                 <ShoppingBag size={16} />
-                {scrapeLoading ? 'Searching TinyFish…' : 'Find recommended products'}
+                {scrapeLoading ? `Searching TinyFish… (${scrapeElapsedLabel})` : 'Find recommended products'}
               </button>
+              {(scrapeLoading || scrapeDebugLines.length > 0) && (
+                <div
+                  className="rounded-[1rem] border border-outline-variant/25 bg-surface-container-low/80 px-3 py-2 text-[10px] leading-relaxed font-mono text-on-secondary-fixed/90 whitespace-pre-wrap break-all"
+                  aria-live="polite"
+                >
+                  {scrapeLoading && (
+                    <p className="text-secondary mb-1.5 border-b border-outline-variant/15 pb-1.5">
+                      Elapsed: {scrapeElapsedLabel} — request in flight to your API; TinyFish work happens server-side.
+                    </p>
+                  )}
+                  {scrapeDebugLines.join('\n')}
+                </div>
+              )}
               {scrapeError && (
                 <p className="text-xs text-red-600 dark:text-red-400">{scrapeError}</p>
               )}
