@@ -16,12 +16,23 @@ export interface Pet {
   id: string;
   ownerId: string;
   name: string;
-  species: 'dog' | 'cat' | 'other';
+  species: 'dog' | 'cat' | 'rabbit' | 'other';
   breed?: string;
+  /** Human-readable age, e.g. "4 years", "6 months". */
+  age?: string;
   birthday?: string;
-  ageText?: string;
   sex?: string;
   weight?: string;
+  /** Region or country; MVP default Singapore. */
+  location?: string;
+  /** Short description of temperament and behavior. */
+  personality?: string;
+  /** Cached public/signed URL when available. */
+  photoUrl?: string;
+  /** Supabase Storage bucket name (e.g. pet-photos). */
+  photoBucket?: string;
+  /** Object path inside the bucket; use with Storage API for display URLs. */
+  photoStoragePath?: string;
   allergies: string[];
   medications: string[];
   ownerNotes?: string;
@@ -62,12 +73,27 @@ export interface Vaccination {
 
 export interface Appointment {
   id: string;
+  ownerId: string;
   petId: string;
-  providerId: string | null;
-  type: string;
+  providerId?: string | null;
+  /** User-entered clinic or provider name when not linked to a provider row. */
+  providerName?: string;
+  providerAddress?: string;
+  /** e.g. vet, grooming, boarding, consultation, other */
+  appointmentType: string;
+  title?: string;
   scheduledAt: string;
+  endAt?: string;
+  /** IANA name for display/reminders; DB default Asia/Singapore. */
+  timezone?: string;
   notes?: string;
-  status: 'scheduled' | 'completed' | 'cancelled';
+  /** Chief complaint / purpose of visit. */
+  reasonForVisit?: string;
+  /** Extra user-supplied fields (prep, contact prefs, etc.). */
+  detailsJson?: Record<string, unknown>;
+  status: 'scheduled' | 'completed' | 'cancelled' | 'no_show';
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Reminder {

@@ -1,40 +1,41 @@
 import "dotenv/config";
 import OpenAI from "openai";
+import { augmentQueryForEmbedding, loadPetById } from "./activePet.js";
 import { loadRagEnv } from "./config.js";
 import { embedTexts } from "./embed.js";
+import { parsePetIdAndQuery } from "./parseArgs.js";
 import { createPgClient } from "./pgClient.js";
+import { retrieveNearestChunks } from "./ragRetrieve.js";
 
 function toVectorLiteral(values: number[]): string {
   return `[${values.join(",")}]`;
 }
 
 async function main() {
-  const query =
-    process.argv.slice(2).join(" ").trim() ||
-    "My Holland Lop is not eating much, what should I watch for?";
+  const defaultQuery = "My Holland Lop is not eating much, what should I watch for?";
+  const { petId, query } = parsePetIdAndQuery(process.argv.slice(2), defaultQuery);
 
   const env = loadRagEnv();
   const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
-  const [qEmb] = await embedTexts(env, openai, [query]);
-  const vecLiteral = toVectorLiteral(qEmb);
 
   const client = createPgClient(env.DATABASE_URL);
   await client.connect();
 
-  const { rows } = await client.query<{
-    id: string;
-    section_heading: string;
-    content: string;
-    distance: string;
-  }>(
-    `select id, section_heading, content, embedding <=> $1::vector as distance
-     from public.rag_chunks
-     where species = $2 and breed = $3
-       and embedding is not null
-     order by embedding <=> $1::vector
-     limit 5`,
-    [vecLiteral, "rabbit", "holland_lop"],
-  );
+  let pet = petId ? await loadPetById(client, petId) : null;
+  if (petId && !pet) {
+    console.error(`[rag] No pet found for id=${petId}; using default species/breed filters.`);
+  }
+  if (pet) {
+    console.error(
+      `[rag] Active pet: ${pet.name} (${pet.species}) → rag filter species=${pet.ragSpecies} breed=${pet.ragBreed} (owner ${pet.ownerId})`,
+    );
+  }
+
+  const textToEmbed = augmentQueryForEmbedding(pet, query);
+  const [qEmb] = await embedTexts(env, openai, [textToEmbed]);
+  const vecLiteral = toVectorLiteral(qEmb);
+
+  const rows = await retrieveNearestChunks(client, vecLiteral, pet, 5);
 
   await client.end();
 

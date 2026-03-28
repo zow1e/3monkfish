@@ -21,13 +21,12 @@ PetCare Copilot is a backend-first AI pet-care assistant scaffold. It is designe
 
 ## Monorepo structure
 
-- `apps/web` - Next.js placeholder only (no UI implementation)
 - `apps/api` - API routes and orchestration entrypoints
 - `apps/worker` - background jobs for ingestion, embeddings, reminders
 - `packages/*` - reusable domain and platform packages
 - `data/tinyfish/*` - raw and normalized listing artifacts
 - `data/knowledge/*` - curated markdown for the Holland Lop RAG MVP seed
-- `db/migrations/*` - SQL for `rag_chunks` (pgvector) and `faq_articles` (curated FAQs)
+- `db/migrations/*` - SQL for `rag_chunks`, `faq_articles`, and app tables (`owners`, `pets`)
 - `docs/*` - architecture, API, prompts, runbooks, eval docs
 
 ## Quick start
@@ -65,6 +64,18 @@ Prerequisites: Node 20+, Postgres with **pgvector** (e.g. Supabase), `OPENAI_API
    pnpm rag:ask -- "My Holland Lop is molting — any grooming tips?"
    ```
 
+   **With a pet profile (recommended):** each owner can have **many pets** (`pets.owner_id` → `owners.id`). Pick one pet for a query via env or CLI so retrieval and answers use its **species, breed, age, weight, location, personality**:
+
+   ```bash
+   export PET_ID="<uuid-from-public.pets>"
+   pnpm rag:search -- "Should I worry about less hay?"
+   # or
+   pnpm rag:search -- --pet-id="<uuid>" "Should I worry about less hay?"
+   pnpm rag:ask -- --pet-id="<uuid>" "Any enrichment ideas?"
+   ```
+
+   Embedding uses **pet context + question**; `rag_chunks` are filtered by that pet’s species/breed (with fallbacks if the corpus has no exact match).
+
 | Path | Purpose |
 |------|--------|
 | `data/knowledge/holland-lop.md` | MVP corpus (education only; not veterinary advice) |
@@ -74,6 +85,19 @@ Prerequisites: Node 20+, Postgres with **pgvector** (e.g. Supabase), `OPENAI_API
 | `db/migrations/001_rag_chunks.sql` | `rag_chunks` table + vector column |
 | `db/migrations/002_faq_articles.sql` | `faq_articles` + 3 seeded Holland Lop questions |
 | `db/migrations/003_rag_faq_chunks.sql` | FAQ rows mirrored into `rag_chunks`; run `pnpm rag:ingest` to embed |
+| `db/migrations/004_owners_and_pets.sql` | `owners` (user profiles) + `pets`; optional `auth_user_id` → Supabase Auth |
+| `db/migrations/005_pets_location_personality_age.sql` | Upgrade: `location` / `personality` / rename `age_text` → `age` if you ran an older 004 |
+| `db/migrations/006_pets_photo_url.sql` | `pets.photo_url` optional cached URL |
+| `db/migrations/007_pets_photo_storage.sql` | `pets.photo_bucket` + `pets.photo_storage_path` for Supabase Storage keys |
+| `db/migrations/008_appointments.sql` | `appointments` — scheduled visits with user-entered provider, reason, notes, `details_json` |
+
+## App database (owners & pets)
+
+Run `db/migrations/004_owners_and_pets.sql` in Supabase after prior migrations. If you previously created `pets` with `age_text` and without `location` / `personality`, also run **`005_pets_location_personality_age.sql`**.
+
+- **`owners`** — name, email (case-insensitive unique), preferences JSON, optional **`auth_user_id`** (FK to `auth.users` on Supabase when the block runs).
+- **`pets`** — many rows can share the same **`owner_id`** (one user, multiple pets). Photo fields: **`photo_url`** (optional cached URL), **`photo_bucket`** (default `pet-photos`), **`photo_storage_path`** (object key in that bucket, e.g. `{owner_id}/{pet_id}.webp`). Query pets from PostgREST/API as usual; on the frontend use **`@petcare/pet-photo`** `resolvePetPhotoPublicUrl({ supabaseProjectUrl, photoUrl, photoBucket, photoStoragePath })` for **public** buckets, or the Supabase client’s **`createSignedUrl`** for private buckets. Run **`007_pets_photo_storage.sql`** if you already applied `006` without bucket/path columns.
+- **`appointments`** — after **`008_appointments.sql`**: links **`owner_id`** + **`pet_id`** (trigger enforces the pet belongs to that owner), **`scheduled_at`**, optional **`end_at`**, **`appointment_type`**, **`reason_for_visit`**, **`notes`**, optional **`provider_name`** / **`provider_address`**, flexible **`details_json`**, **`status`** (`scheduled` \| `completed` \| `cancelled` \| `no_show`).
 
 ## Environment variables
 
@@ -85,6 +109,7 @@ Core variables:
 - `OPENAI_MODEL`
 - `OPENAI_EMBEDDING_MODEL`
 - `OPENAI_CHAT_MODEL` (optional; used by `pnpm rag:ask`)
+- `PET_ID` (optional; UUID of `public.pets` for `rag:search` / `rag:ask`)
 - `DATABASE_URL`
 - `PGVECTOR_ENABLED`
 - `TINYFISH_RAW_DATA_DIR`
