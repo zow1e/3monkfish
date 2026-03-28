@@ -4,8 +4,8 @@ import { Link, useLocation } from 'react-router-dom';
 const navItems = [
   { label: 'Dashboard', to: '/dashboard' },
   { label: 'My Pets', to: '/pet-profile' },
+  { label: 'Explore', to: '/search' },
   { label: 'AI Assistant', to: '/ai-chat' },
-  { label: 'Settings', to: '#' },
 ];
 
 export default function Header() {
