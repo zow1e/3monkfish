@@ -1,8 +1,9 @@
 # @petcare/listings-ingestion
 
-Backend-first TinyFish scraping and normalization pipeline for ecommerce product listings.
+Lean TinyFish MVP scraping pipeline for ecommerce product listings.
 
-- Request-driven keyword scraping across supported sites
+- One primary TinyFish goal builder for visible product-card extraction
+- Synchronous `/run` first for fast request/response scraping
 - Raw TinyFish output persistence under `data/tinyfish/raw`
 - Normalized product listing output under `data/tinyfish/normalized`
-- Goal builders, site strategies, anti-bot fallback heuristics, and file writers for API and worker usage
+- Lightweight site strategies, blocked detection, keyword extraction, and JSON writers
