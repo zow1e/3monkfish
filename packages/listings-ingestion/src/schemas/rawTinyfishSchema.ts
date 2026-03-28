@@ -1,15 +1,8 @@
-import { z } from 'zod';
+import { rawTinyFishProductSchema, rawTinyFishSiteResultSchema } from '@petcare/validations';
 
-export const rawTinyfishListingSchema = z.object({
-  source: z.string(),
-  listingType: z.enum(['provider', 'product', 'service']),
-  id: z.string().optional(),
-  title: z.string().optional(),
-  url: z.string().optional(),
-  location: z.string().optional(),
-  rating: z.number().optional(),
-  payload: z.record(z.unknown()).default({}),
-  scrapedAt: z.string(),
-});
+export const rawTinyfishProductSchema = rawTinyFishProductSchema;
+export const rawTinyfishSiteResultSchema = rawTinyFishSiteResultSchema;
+export const rawTinyfishBatchSchema = rawTinyFishSiteResultSchema.shape.products;
 
-export const rawTinyfishBatchSchema = z.array(rawTinyfishListingSchema);
+// Legacy alias kept temporarily for compatibility inside the monorepo.
+export const rawTinyfishListingSchema = rawTinyfishProductSchema;

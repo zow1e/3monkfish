@@ -1,13 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { rawTinyfishListingSchema } from '../../packages/listings-ingestion/src/schemas/rawTinyfishSchema';
+import { rawTinyfishSiteResultSchema } from '../../packages/listings-ingestion/src/schemas/rawTinyfishSchema';
 
-describe('rawTinyfishListingSchema', () => {
-  it('validates minimal listing', () => {
-    const result = rawTinyfishListingSchema.safeParse({
-      source: 'tinyfish',
-      listingType: 'provider',
-      payload: {},
-      scrapedAt: new Date().toISOString(),
+describe('rawTinyfishSiteResultSchema', () => {
+  it('validates minimal TinyFish product results', () => {
+    const result = rawTinyfishSiteResultSchema.safeParse({
+      products: [
+        {
+          name: 'Rabbit Treats',
+          image: 'https://example.com/image.jpg',
+          source_site: 'amazon',
+        },
+      ],
     });
     expect(result.success).toBe(true);
   });

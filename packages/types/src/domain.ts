@@ -16,12 +16,25 @@ export interface Pet {
   id: string;
   ownerId: string;
   name: string;
-  species: 'dog' | 'cat' | 'other';
+  species: 'dog' | 'cat' | 'rabbit' | 'bird' | 'other';
   breed?: string;
+  /** Human-readable age, e.g. "4 years", "6 months". */
+  age?: string;
   birthday?: string;
-  ageText?: string;
   sex?: string;
   weight?: string;
+  /** Optional display height, e.g. "56cm". */
+  height?: string;
+  /** Region or country; MVP default Singapore. */
+  location?: string;
+  /** Short description of temperament and behavior. */
+  personality?: string;
+  /** Cached public/signed URL when available. */
+  photoUrl?: string;
+  /** Supabase Storage bucket name (e.g. pet-photos). */
+  photoBucket?: string;
+  /** Object path inside the bucket; use with Storage API for display URLs. */
+  photoStoragePath?: string;
   allergies: string[];
   medications: string[];
   ownerNotes?: string;
@@ -62,12 +75,27 @@ export interface Vaccination {
 
 export interface Appointment {
   id: string;
+  ownerId: string;
   petId: string;
-  providerId: string | null;
-  type: string;
+  providerId?: string | null;
+  /** User-entered clinic or provider name when not linked to a provider row. */
+  providerName?: string;
+  providerAddress?: string;
+  /** e.g. vet, grooming, boarding, consultation, other */
+  appointmentType: string;
+  title?: string;
   scheduledAt: string;
+  endAt?: string;
+  /** IANA name for display/reminders; DB default Asia/Singapore. */
+  timezone?: string;
   notes?: string;
-  status: 'scheduled' | 'completed' | 'cancelled';
+  /** Chief complaint / purpose of visit. */
+  reasonForVisit?: string;
+  /** Extra user-supplied fields (prep, contact prefs, etc.). */
+  detailsJson?: Record<string, unknown>;
+  status: 'scheduled' | 'completed' | 'cancelled' | 'no_show';
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Reminder {
@@ -158,4 +186,85 @@ export interface TinyfishRawListing {
   listingType: 'provider' | 'product' | 'service';
   payload: Record<string, unknown>;
   scrapedAt: string;
+}
+
+export type SupportedSite = 'amazon' | 'petmall' | 'petlovers';
+
+export interface TinyFishScrapeRequest {
+  keywords: string;
+  sites: SupportedSite[];
+  maxProductsPerSite?: number;
+  countryCode?: string;
+}
+
+export interface RawTinyFishProduct {
+  name?: string;
+  image?: string;
+  price?: number | null;
+  rating?: number | null;
+  reviews?: number | null;
+  in_stock?: boolean | null;
+  listing_url?: string;
+  shipping_fee?: number | null;
+  delivery_countries?: string[] | null;
+  description_text?: string | null;
+  review_text?: string | null;
+  product_keywords?: string[];
+  source_site: SupportedSite;
+}
+
+export interface RawTinyFishSiteResult {
+  products: RawTinyFishProduct[];
+  blocked_reason?: string | null;
+  notes?: string | null;
+}
+
+export interface NormalizedProductListing {
+  id: string;
+  source_site: SupportedSite;
+  search_keywords: string;
+  name: string | null;
+  image: string | null;
+  price: number | null;
+  rating: number | null;
+  reviews: number | null;
+  in_stock: boolean | null;
+  listing_url: string | null;
+  shipping_fee: number | null;
+  delivery_countries: string[];
+  product_keywords: string[];
+  description_text: string | null;
+  review_text: string | null;
+}
+
+export interface TinyFishFailureResult {
+  status: 'failed' | 'blocked';
+  source_site: SupportedSite;
+  error_message: string;
+  raw_result?: unknown;
+}
+
+export interface TinyFishRunOutcome {
+  status: 'completed' | 'failed' | 'blocked' | 'partial';
+  source_site: SupportedSite;
+  raw_result: unknown;
+  normalized_results: NormalizedProductListing[];
+  error_message?: string;
+  used_stealth_fallback?: boolean;
+  raw_file_path?: string;
+  normalized_file_path?: string;
+}
+
+export interface TinyFishScrapeJobResult {
+  keywords: string;
+  requestedSites: SupportedSite[];
+  status: 'completed' | 'failed' | 'blocked' | 'partial';
+  site_outcomes: TinyFishRunOutcome[];
+  normalized_results: NormalizedProductListing[];
+  files: {
+    raw: string[];
+    normalized: string[];
+  };
+  started_at: string;
+  completed_at: string;
 }

@@ -7,12 +7,21 @@
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "rag:ingest": "tsx scripts/rag/ingest.ts",
+    "rag:search": "tsx scripts/rag/search.ts",
+    "rag:ask": "tsx scripts/rag/answer.ts"
   },
   "devDependencies": {
+    "@petcare/rag-answer": "workspace:*",
     "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.10",
+    "dotenv": "^16.4.7",
     "eslint": "^9.18.0",
+    "openai": "^4.77.0",
+    "pg": "^8.13.1",
     "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
     "turbo": "^2.3.3",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8",
