@@ -75,13 +75,14 @@ Prerequisites: Node 20+, Postgres with **pgvector** (e.g. Supabase), `OPENAI_API
 | `db/migrations/002_faq_articles.sql` | `faq_articles` + 3 seeded Holland Lop questions |
 | `db/migrations/003_rag_faq_chunks.sql` | FAQ rows mirrored into `rag_chunks`; run `pnpm rag:ingest` to embed |
 | `db/migrations/004_owners_and_pets.sql` | `owners` (user profiles) + `pets`; optional `auth_user_id` → Supabase Auth |
+| `db/migrations/005_pets_location_personality_age.sql` | Upgrade: `location` / `personality` / rename `age_text` → `age` if you ran an older 004 |
 
 ## App database (owners & pets)
 
-Run `db/migrations/004_owners_and_pets.sql` in Supabase after prior migrations. This creates:
+Run `db/migrations/004_owners_and_pets.sql` in Supabase after prior migrations. If you previously created `pets` with `age_text` and without `location` / `personality`, also run **`005_pets_location_personality_age.sql`**.
 
 - **`owners`** — name, email (case-insensitive unique), preferences JSON, optional **`auth_user_id`** (FK to `auth.users` on Supabase when the block runs).
-- **`pets`** — `owner_id` FK, species (`dog` / `cat` / `rabbit` / `other`), profile fields aligned with `packages/types` Owner/Pet shapes.
+- **`pets`** — `breed`, **`age`** (free text), **`weight`**, **`location`** (default **`Singapore`**), **`personality`** (short temperament/behavior blurb), plus species (`dog` / `cat` / `rabbit` / `other`), birthday, notes, etc. Aligned with `packages/types` `Pet`.
 
 ## Environment variables
 

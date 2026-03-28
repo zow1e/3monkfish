@@ -38,9 +38,11 @@ create table if not exists public.pets (
   species text not null,
   breed text,
   birthday date,
-  age_text text,
+  age text,
   sex text,
   weight text,
+  location text not null default 'Singapore',
+  personality text,
   allergies_json jsonb not null default '[]'::jsonb,
   medications_json jsonb not null default '[]'::jsonb,
   owner_notes text,
@@ -66,6 +68,9 @@ create trigger set_pets_updated_at
 
 comment on table public.owners is 'Pet owner profiles; auth_user_id links to Supabase Auth when used.';
 comment on table public.pets is 'Pets belonging to an owner; species includes rabbit for small-mammal MVP.';
+comment on column public.pets.age is 'Approximate age in free text (e.g. "4 years", "6 months").';
+comment on column public.pets.location is 'Region or country; MVP default Singapore.';
+comment on column public.pets.personality is 'Short description of temperament and behavior.';
 
 -- Supabase only: tie owner row to login identity (safe no-op if auth schema missing).
 do $$
