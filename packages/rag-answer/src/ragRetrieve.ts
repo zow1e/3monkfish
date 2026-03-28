@@ -68,7 +68,7 @@ export async function retrieveNearestChunks(
   return broad.rows;
 }
 
-/** Same retrieval without id/distance shape for answer.ts (section + content only). */
+/** Same retrieval without id/distance shape for answer (section + content only). */
 export async function retrieveNearestChunksForAnswer(
   client: Client,
   vecLiteral: string,

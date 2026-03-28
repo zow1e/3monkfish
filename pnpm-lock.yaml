@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@petcare/rag-answer':
+        specifier: workspace:*
+        version: link:packages/rag-answer
       '@types/node':
         specifier: ^22.10.2
         version: 22.19.15
@@ -50,12 +53,18 @@ importers:
       '@petcare/listings-ingestion':
         specifier: workspace:*
         version: link:../../packages/listings-ingestion
+      '@petcare/rag-answer':
+        specifier: workspace:*
+        version: link:../../packages/rag-answer
       '@petcare/types':
         specifier: workspace:*
         version: link:../../packages/types
       '@petcare/validations':
         specifier: workspace:*
         version: link:../../packages/validations
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.6.1
       express:
         specifier: ^4.21.2
         version: 4.22.1
@@ -111,6 +120,22 @@ importers:
   packages/prompts: {}
 
   packages/rag: {}
+
+  packages/rag-answer:
+    dependencies:
+      openai:
+        specifier: ^4.77.0
+        version: 4.104.0(zod@3.25.76)
+      pg:
+        specifier: ^8.13.1
+        version: 8.20.0
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+    devDependencies:
+      '@types/pg':
+        specifier: ^8.11.10
+        version: 8.20.0
 
   packages/safety: {}
 

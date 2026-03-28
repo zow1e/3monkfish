@@ -1,11 +1,14 @@
 import "dotenv/config";
 import OpenAI from "openai";
-import { augmentQueryForEmbedding, loadPetById } from "./activePet.js";
-import { loadRagEnv } from "./config.js";
-import { embedTexts } from "./embed.js";
+import {
+  augmentQueryForEmbedding,
+  loadPetById,
+  createPgClient,
+  embedTexts,
+  loadRagEnv,
+  retrieveNearestChunks,
+} from "@petcare/rag-answer";
 import { parsePetIdAndQuery } from "./parseArgs.js";
-import { createPgClient } from "./pgClient.js";
-import { retrieveNearestChunks } from "./ragRetrieve.js";
 
 function toVectorLiteral(values: number[]): string {
   return `[${values.join(",")}]`;
