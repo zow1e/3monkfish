@@ -73,12 +73,27 @@ export interface Vaccination {
 
 export interface Appointment {
   id: string;
+  ownerId: string;
   petId: string;
-  providerId: string | null;
-  type: string;
+  providerId?: string | null;
+  /** User-entered clinic or provider name when not linked to a provider row. */
+  providerName?: string;
+  providerAddress?: string;
+  /** e.g. vet, grooming, boarding, consultation, other */
+  appointmentType: string;
+  title?: string;
   scheduledAt: string;
+  endAt?: string;
+  /** IANA name for display/reminders; DB default Asia/Singapore. */
+  timezone?: string;
   notes?: string;
-  status: 'scheduled' | 'completed' | 'cancelled';
+  /** Chief complaint / purpose of visit. */
+  reasonForVisit?: string;
+  /** Extra user-supplied fields (prep, contact prefs, etc.). */
+  detailsJson?: Record<string, unknown>;
+  status: 'scheduled' | 'completed' | 'cancelled' | 'no_show';
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Reminder {

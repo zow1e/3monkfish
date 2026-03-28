@@ -21,7 +21,6 @@ PetCare Copilot is a backend-first AI pet-care assistant scaffold. It is designe
 
 ## Monorepo structure
 
-- `apps/web` - Next.js placeholder only (no UI implementation)
 - `apps/api` - API routes and orchestration entrypoints
 - `apps/worker` - background jobs for ingestion, embeddings, reminders
 - `packages/*` - reusable domain and platform packages
@@ -90,6 +89,7 @@ Prerequisites: Node 20+, Postgres with **pgvector** (e.g. Supabase), `OPENAI_API
 | `db/migrations/005_pets_location_personality_age.sql` | Upgrade: `location` / `personality` / rename `age_text` → `age` if you ran an older 004 |
 | `db/migrations/006_pets_photo_url.sql` | `pets.photo_url` optional cached URL |
 | `db/migrations/007_pets_photo_storage.sql` | `pets.photo_bucket` + `pets.photo_storage_path` for Supabase Storage keys |
+| `db/migrations/008_appointments.sql` | `appointments` — scheduled visits with user-entered provider, reason, notes, `details_json` |
 
 ## App database (owners & pets)
 
@@ -97,6 +97,7 @@ Run `db/migrations/004_owners_and_pets.sql` in Supabase after prior migrations. 
 
 - **`owners`** — name, email (case-insensitive unique), preferences JSON, optional **`auth_user_id`** (FK to `auth.users` on Supabase when the block runs).
 - **`pets`** — many rows can share the same **`owner_id`** (one user, multiple pets). Photo fields: **`photo_url`** (optional cached URL), **`photo_bucket`** (default `pet-photos`), **`photo_storage_path`** (object key in that bucket, e.g. `{owner_id}/{pet_id}.webp`). Query pets from PostgREST/API as usual; on the frontend use **`@petcare/pet-photo`** `resolvePetPhotoPublicUrl({ supabaseProjectUrl, photoUrl, photoBucket, photoStoragePath })` for **public** buckets, or the Supabase client’s **`createSignedUrl`** for private buckets. Run **`007_pets_photo_storage.sql`** if you already applied `006` without bucket/path columns.
+- **`appointments`** — after **`008_appointments.sql`**: links **`owner_id`** + **`pet_id`** (trigger enforces the pet belongs to that owner), **`scheduled_at`**, optional **`end_at`**, **`appointment_type`**, **`reason_for_visit`**, **`notes`**, optional **`provider_name`** / **`provider_address`**, flexible **`details_json`**, **`status`** (`scheduled` \| `completed` \| `cancelled` \| `no_show`).
 
 ## Environment variables
 
