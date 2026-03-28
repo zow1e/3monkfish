@@ -1,6 +1,8 @@
 # @petcare/listings-ingestion
 
-Ingestion pipeline for Tinyfish-generated listings JSON.
+Backend-first TinyFish scraping and normalization pipeline for ecommerce product listings.
 
-- Inputs: `data/tinyfish/raw/*.json`
-- Outputs: `data/tinyfish/normalized/*.json`
+- Request-driven keyword scraping across supported sites
+- Raw TinyFish output persistence under `data/tinyfish/raw`
+- Normalized product listing output under `data/tinyfish/normalized`
+- Goal builders, site strategies, anti-bot fallback heuristics, and file writers for API and worker usage

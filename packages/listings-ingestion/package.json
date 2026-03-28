@@ -9,5 +9,10 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "@petcare/config": "workspace:*",
+    "@petcare/types": "workspace:*",
+    "@petcare/validations": "workspace:*"
   }
 }

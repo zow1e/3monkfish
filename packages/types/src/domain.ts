@@ -185,3 +185,84 @@ export interface TinyfishRawListing {
   payload: Record<string, unknown>;
   scrapedAt: string;
 }
+
+export type SupportedSite = 'amazon' | 'petmall' | 'petlovers';
+
+export interface TinyFishScrapeRequest {
+  keywords: string;
+  sites: SupportedSite[];
+  maxProductsPerSite?: number;
+  countryCode?: string;
+}
+
+export interface RawTinyFishProduct {
+  name?: string;
+  image?: string;
+  price?: number | null;
+  rating?: number | null;
+  reviews?: number | null;
+  in_stock?: boolean | null;
+  listing_url?: string;
+  shipping_fee?: number | null;
+  delivery_countries?: string[] | null;
+  description_text?: string | null;
+  review_text?: string | null;
+  product_keywords?: string[];
+  source_site: SupportedSite;
+}
+
+export interface RawTinyFishSiteResult {
+  products: RawTinyFishProduct[];
+  blocked_reason?: string | null;
+  notes?: string | null;
+}
+
+export interface NormalizedProductListing {
+  id: string;
+  source_site: SupportedSite;
+  search_keywords: string;
+  name: string | null;
+  image: string | null;
+  price: number | null;
+  rating: number | null;
+  reviews: number | null;
+  in_stock: boolean | null;
+  listing_url: string | null;
+  shipping_fee: number | null;
+  delivery_countries: string[];
+  product_keywords: string[];
+  description_text: string | null;
+  review_text: string | null;
+}
+
+export interface TinyFishFailureResult {
+  status: 'failed' | 'blocked';
+  source_site: SupportedSite;
+  error_message: string;
+  raw_result?: unknown;
+}
+
+export interface TinyFishRunOutcome {
+  status: 'completed' | 'failed' | 'blocked' | 'partial';
+  source_site: SupportedSite;
+  raw_result: unknown;
+  normalized_results: NormalizedProductListing[];
+  error_message?: string;
+  used_stealth_fallback?: boolean;
+  raw_file_path?: string;
+  normalized_file_path?: string;
+}
+
+export interface TinyFishScrapeJobResult {
+  keywords: string;
+  requestedSites: SupportedSite[];
+  status: 'completed' | 'failed' | 'blocked' | 'partial';
+  site_outcomes: TinyFishRunOutcome[];
+  normalized_results: NormalizedProductListing[];
+  files: {
+    raw: string[];
+    normalized: string[];
+  };
+  started_at: string;
+  completed_at: string;
+}
