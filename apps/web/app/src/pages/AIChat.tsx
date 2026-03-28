@@ -15,7 +15,7 @@ import { HOLLAND_LOP_FAQ_QUESTIONS } from '../data/hollandLopFaq';
 
 type Message = { role: 'ai' | 'user'; text: string };
 
-const TINYFISH_SITES = ['amazon', 'petmall', 'petlovers'] as const;
+const TINYFISH_SITES = ['amazon'] as const;
 /** Max allowed by `tinyFishScrapeRequestSchema` — request as many products per site as the API permits. */
 const MAX_PRODUCTS_PER_SITE = 10;
 
@@ -219,6 +219,7 @@ export default function AIChat() {
       keywords: keywordsStr,
       maxProductsPerSite: MAX_PRODUCTS_PER_SITE,
       sites: TINYFISH_SITES,
+      searchType: 'product',
     });
     scrapeStartedAtRef.current = Date.now();
     setScrapeElapsedLabel('0.0s');

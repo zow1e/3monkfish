@@ -127,19 +127,7 @@ export const chatbotKeywordScrapeRequestSchema = z.object({
   searchType: tinyFishSearchTypeSchema.optional(),
 });
 
-export const petProfileKeywordPresetSchema = z.object({
-  petId: z.string().min(1),
-  petName: z.string().min(1),
-  species: z.string().min(1),
-  breed: z.string().min(1).optional(),
-  allergies: z.array(z.string().min(1)).optional(),
-  sensitivities: z.array(z.string().min(1)).optional(),
-  productKeywords: z.array(z.string().min(1)),
-  serviceKeywords: z.array(z.string().min(1)),
-});
-
 export const searchPageScrapeRequestSchema = z.object({
-  petProfile: petProfileKeywordPresetSchema,
   searchType: tinyFishSearchTypeSchema,
   searchInput: z.string().trim().min(1),
   sites: z.array(supportedSiteSchema).min(1),

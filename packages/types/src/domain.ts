@@ -290,19 +290,7 @@ export interface ChatbotKeywordScrapeResult {
   runs: TinyFishScrapeJobResult[];
 }
 
-export interface PetProfileKeywordPreset {
-  petId: string;
-  petName: string;
-  species: string;
-  breed?: string;
-  allergies?: string[];
-  sensitivities?: string[];
-  productKeywords: string[];
-  serviceKeywords: string[];
-}
-
 export interface SearchPageScrapeRequest {
-  petProfile: PetProfileKeywordPreset;
   searchType: TinyFishSearchType;
   searchInput: string;
   sites: SupportedSite[];
@@ -313,12 +301,5 @@ export interface SearchPageScrapeRequest {
 export interface SearchPageScrapeResult extends TinyFishScrapeJobResult {
   requestSource: 'search-page';
   searchType: TinyFishSearchType;
-  petProfile: {
-    petId: string;
-    petName: string;
-    species: string;
-    breed?: string;
-  };
-  presetKeywords: string[];
   combinedKeywords: string;
 }

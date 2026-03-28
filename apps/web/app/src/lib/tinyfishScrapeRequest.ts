@@ -1,3 +1,5 @@
+export type TinyfishFrontendSearchType = 'product' | 'service';
+
 /**
  * Build the single `keywords` string TinyFish expects (see `tinyFishScrapeRequestSchema` + `buildStartUrl`).
  * Uses lowercase tokens and single spaces so `encodeURIComponent` in site strategies stays predictable.
@@ -16,11 +18,30 @@ export function buildListingsScrapeBody(params: {
   keywords: string;
   maxProductsPerSite: number;
   sites?: readonly string[];
+  searchType?: TinyfishFrontendSearchType;
 }) {
   const keywords = params.keywords.replace(/\s+/g, ' ').trim();
-  const sites = params.sites ?? (['amazon', 'petmall', 'petlovers'] as const);
+  const sites = params.sites ?? (['amazon'] as const);
   return {
     keywords,
+    sites: [...sites],
+    maxProductsPerSite: Math.min(10, Math.max(1, Math.floor(Number(params.maxProductsPerSite)))),
+    ...(params.searchType ? { searchType: params.searchType } : {}),
+  };
+}
+
+export function buildSearchPageScrapeBody(params: {
+  searchType: TinyfishFrontendSearchType;
+  searchInput: string;
+  maxProductsPerSite: number;
+  sites?: readonly string[];
+}) {
+  const searchInput = params.searchInput.replace(/\s+/g, ' ').trim();
+  const sites = params.sites ?? (['amazon'] as const);
+
+  return {
+    searchType: params.searchType,
+    searchInput,
     sites: [...sites],
     maxProductsPerSite: Math.min(10, Math.max(1, Math.floor(Number(params.maxProductsPerSite)))),
   };

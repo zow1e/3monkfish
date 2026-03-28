@@ -1,33 +1,27 @@
 import { runScrapeJob } from '@petcare/listings-ingestion';
-import type { SearchPageScrapeRequest, SearchPageScrapeResult } from '@petcare/types';
+import type { SearchPageScrapeResult } from '@petcare/types';
 import { searchPageScrapeRequestSchema } from '@petcare/validations';
-import { buildCombinedPetProfileQuery } from './petProfileKeywordProvider';
+import { resolveSitesForSearchType } from './tinyfishSitePolicy';
 
 export class SearchPageListingsScrapeService {
   async execute(input: unknown): Promise<SearchPageScrapeResult> {
     const request = searchPageScrapeRequestSchema.parse(input);
-    const { presetKeywords, combinedKeywords } = buildCombinedPetProfileQuery(request);
+    const combinedKeywords = request.searchInput.trim();
+    const sites = resolveSitesForSearchType(request.searchType, request.sites);
     const result = await runScrapeJob({
       keywords: combinedKeywords,
-      sites: request.sites,
+      sites,
       maxProductsPerSite: request.maxProductsPerSite,
       countryCode: request.countryCode,
       searchType: request.searchType,
       requestSource: 'search-page',
-      filenameTag: request.petProfile.petId,
+      filenameTag: request.searchType,
     });
 
     return {
       ...result,
       requestSource: 'search-page',
       searchType: request.searchType,
-      petProfile: {
-        petId: request.petProfile.petId,
-        petName: request.petProfile.petName,
-        species: request.petProfile.species,
-        breed: request.petProfile.breed,
-      },
-      presetKeywords,
       combinedKeywords,
     };
   }

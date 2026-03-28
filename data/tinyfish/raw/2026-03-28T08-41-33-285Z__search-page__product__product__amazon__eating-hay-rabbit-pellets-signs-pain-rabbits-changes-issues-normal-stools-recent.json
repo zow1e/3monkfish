@@ -1,0 +1,82 @@
+{
+  "run_id": "56306e95-e50b-4253-abcd-4d2a0ead71e5",
+  "status": "COMPLETED",
+  "started_at": "2026-03-28T08:44:51.196Z",
+  "finished_at": "2026-03-28T08:46:07.940Z",
+  "num_of_steps": 3,
+  "result": {
+    "products": [
+      {
+        "name": "Sherwood Pet Health Adult Rabbit Food Timothy Hay Free-Choice 4.5lbs Hay-Based, Grain and Soy-Free for Better Digestion",
+        "image": "https://m.media-amazon.com/images/I/61Vya8MKX7L._AC_UL320_.jpg",
+        "price": 23.95,
+        "rating": 4.7,
+        "reviews": 215,
+        "in_stock": true,
+        "listing_url": "https://www.amazon.com/Sherwood-Pet-Health-Free-Choice-Hay-Based/dp/B08Q76D3HG/ref=sr_1_1?dib=eyJ2IjoiMSJ9.7BCaHD6VhpHIRqLGh-DMuW_zpfnUNKg-wBvqJW1aPtd1M0pcpZIv_7LPYo37OaSxkyIZ69p6osqqvXyYVVijCJQ8-BKgOLGiJqY9dfAEJDrKs_ubo-NQ3tODFV6w0BFeCgKA_1cngGBCPL0Frf__Raen3H1gjDciTG0m3O02tify7OnnwRRyusvgHS3WXECz.6erCYl0Mi9K2w35clV-lQh0Lo5uGL-XBLmuY8G4mI7o&dib_tag=se&keywords=eating+hay+rabbit+pellets+signs+pain+rabbits+changes+issues+normal+stools+recent+fecal+look+ve&nsdOptOutParam=true&qid=1774687496&sr=8-1",
+        "shipping_fee": null,
+        "delivery_countries": [],
+        "description_text": null,
+        "review_text": null,
+        "source_site": "amazon"
+      },
+      {
+        "name": "HA4E - Rabbit Gastrointestinal Stasis Treatment - Promotes Healthy Digestion & GI Stasis Relief -Natural Homeopathic Digestive Health Tablets - 300 Count",
+        "image": "https://m.media-amazon.com/images/I/71p9GhGfjRL._AC_UL320_.jpg",
+        "price": 29.99,
+        "rating": 4.5,
+        "reviews": 49,
+        "in_stock": true,
+        "listing_url": "https://www.amazon.com/All-Natural-Gastrointestinal-Treatment-Effective-Homeopathic/dp/B0D5ZQB1RM/ref=sr_1_2?dib=eyJ2IjoiMSJ9.7BCaHD6VhpHIRqLGh-DMuW_zpfnUNKg-wBvqJW1aPtd1M0pcpZIv_7LPYo37OaSxkyIZ69p6osqqvXyYVVijCJQ8-BKgOLGiJqY9dfAEJDrKs_ubo-NQ3tODFV6w0BFeCgKA_1cngGBCPL0Frf__Raen3H1gjDciTG0m3O02tify7OnnwRRyusvgHS3WXECz.6erCYl0Mi9K2w35clV-lQh0Lo5uGL-XBLmuY8G4mI7o&dib_tag=se&keywords=eating+hay+rabbit+pellets+signs+pain+rabbits+changes+issues+normal+stools+recent+fecal+look+ve&nsdOptOutParam=true&qid=1774687496&sr=8-2",
+        "shipping_fee": null,
+        "delivery_countries": [],
+        "description_text": null,
+        "review_text": null,
+        "source_site": "amazon"
+      },
+      {
+        "name": "Oxbow Garden Select Rabbit Food, Adult Rabbit, Made with Oxbow Timothy Hay, Vitamin & Mineral Rich Pet Food Pellets, Bunny Supplies, Made in USA, High Fiber, 4 lb Bag",
+        "image": "https://m.media-amazon.com/images/I/81OvaLtCKXL._AC_UL320_.jpg",
+        "price": 12.74,
+        "rating": 4.8,
+        "reviews": 1778,
+        "in_stock": true,
+        "listing_url": "https://www.amazon.com/Oxbow-Adult-Rabbit-Garden-Select/dp/B06XX68LM2/ref=sr_1_3?dib=eyJ2IjoiMSJ9.7BCaHD6VhpHIRqLGh-DMuW_zpfnUNKg-wBvqJW1aPtd1M0pcpZIv_7LPYo37OaSxkyIZ69p6osqqvXyYVVijCJQ8-BKgOLGiJqY9dfAEJDrKs_ubo-NQ3tODFV6w0BFeCgKA_1cngGBCPL0Frf__Raen3H1gjDciTG0m3O02tify7OnnwRRyusvgHS3WXECz.6erCYl0Mi9K2w35clV-lQh0Lo5uGL-XBLmuY8G4mI7o&dib_tag=se&keywords=eating+hay+rabbit+pellets+signs+pain+rabbits+changes+issues+normal+stools+recent+fecal+look+ve&nsdOptOutParam=true&qid=1774687496&rdc=1&sr=8-3",
+        "shipping_fee": null,
+        "delivery_countries": [],
+        "description_text": null,
+        "review_text": null,
+        "source_site": "amazon"
+      },
+      {
+        "name": "HealthyGut Probiotics for Rabbits Dietary Supplement, All-Natural Digestive System Formula (120 Servings)",
+        "image": "https://m.media-amazon.com/images/I/714LxWflhuL._AC_UL320_.jpg",
+        "price": 19.95,
+        "rating": 4.6,
+        "reviews": 1056,
+        "in_stock": true,
+        "listing_url": "https://www.amazon.com/HealthyGut-Probiotics-for-Rabbits-120/dp/B07TCVKLJ1/ref=sr_1_4?dib=eyJ2IjoiMSJ9.7BCaHD6VhpHIRqLGh-DMuW_zpfnUNKg-wBvqJW1aPtd1M0pcpZIv_7LPYo37OaSxkyIZ69p6osqqvXyYVVijCJQ8-BKgOLGiJqY9dfAEJDrKs_ubo-NQ3tODFV6w0BFeCgKA_1cngGBCPL0Frf__Raen3H1gjDciTG0m3O02tify7OnnwRRyusvgHS3WXECz.6erCYl0Mi9K2w35clV-lQh0Lo5uGL-XBLmuY8G4mI7o&dib_tag=se&keywords=eating+hay+rabbit+pellets+signs+pain+rabbits+changes+issues+normal+stools+recent+fecal+look+ve&nsdOptOutParam=true&qid=1774687496&sr=8-4",
+        "shipping_fee": null,
+        "delivery_countries": [],
+        "description_text": null,
+        "review_text": null,
+        "source_site": "amazon"
+      },
+      {
+        "name": "Kaytee Timothy Complete Rabbit Food, Made with Timothy Hay, High in Fiber, Supports Dental Health and Digestion, 4.5 pounds",
+        "image": "https://m.media-amazon.com/images/I/81oV19jJ1uL._AC_UL320_.jpg",
+        "price": 9.95,
+        "rating": 4.7,
+        "reviews": 6285,
+        "in_stock": true,
+        "listing_url": "https://www.amazon.com/Kaytee-Timothy-Complete-Rabbit-4-5-lb/dp/B00BAQYO3C/ref=sr_1_5?dib=eyJ2IjoiMSJ9.7BCaHD6VhpHIRqLGh-DMuW_zpfnUNKg-wBvqJW1aPtd1M0pcpZIv_7LPYo37OaSxkyIZ69p6osqqvXyYVVijCJQ8-BKgOLGiJqY9dfAEJDrKs_ubo-NQ3tODFV6w0BFeCgKA_1cngGBCPL0Frf__Raen3H1gjDciTG0m3O02tify7OnnwRRyusvgHS3WXECz.6erCYl0Mi9K2w35clV-lQh0Lo5uGL-XBLmuY8G4mI7o&dib_tag=se&keywords=eating+hay+rabbit+pellets+signs+pain+rabbits+changes+issues+normal+stools+recent+fecal+look+ve&nsdOptOutParam=true&qid=1774687496&sr=8-5",
+        "shipping_fee": null,
+        "delivery_countries": [],
+        "description_text": null,
+        "review_text": null,
+        "source_site": "amazon"
+      }
+    ]
+  },
+  "error": null
+}
